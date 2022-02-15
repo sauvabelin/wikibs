@@ -1,7 +1,9 @@
-FROM mediawiki:1.31.16-fpm-alpine
+FROM mediawiki:1.31.16
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+EXPOSE 80/tcp
 
 VOLUME /var/www/html/images
 
