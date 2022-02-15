@@ -9,7 +9,7 @@ VOLUME /var/www/html/images
 
 # Copy netbs extension
 COPY ./NetBSWikiAuth /var/www/html/extensions/NetBSAuth
-RUN composer install --working-dir /var/www/html/extensions/NetBSAuth --ignore-platform-reqs
+RUN composer install --working-dir /var/www/html/extensions/NetBSAuth
 
 # Copy mobile frontend extension
 COPY ./MobileFrontend /var/www/html/extensions/MobileFrontend
