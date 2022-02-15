@@ -7,9 +7,6 @@ class NetBS
      */
     private static $netBS   = null;
 
-    /**
-     * @var \PDO
-     */
     private $pdo  = null;
 
     /**
@@ -81,13 +78,19 @@ class NetBS
 
     public function getUser($username) {
 
-        $select = $this->getPdo()->prepare("SELECT {$this->usernameColumn}, {$this->hashColumn}, {$this->saltColumn}, {$this->isAdminColumn} FROM {$this->table} WHERE username = :u");
-        $select->bindParam('u', $username);
+        $select = $this->getPdo()->prepare("SELECT {$this->usernameColumn}, {$this->hashColumn}, {$this->saltColumn}, {$this->isAdminColumn} FROM {$this->table} WHERE username = ?");
+        $select->bind_param('s', $username);
         $select->execute();
 
-        $result = $select->fetchAll();
+        $select->bind_result($uname, $hash, $salt, $isAdmin);
+        $select->fetch();
 
-        return count($result) === 1 ? $result[0] : null;
+        return $uname !== null ? [
+            'username' => $uname,
+            'password' => $hash,
+            'salt' => $salt,
+            'wiki_admin' => $isAdmin,
+        ] : null;
     }
 
     private function getPdo() {
@@ -95,7 +98,7 @@ class NetBS
         if($this->pdo)
             return $this->pdo;
 
-        $this->pdo  = new \PDO("mysql:dbname={$this->database};host={$this->host}", $this->username, $this->password);
+        $this->pdo = new \mysqli($this->database, $this->username, $this->password, $this->database);
         return $this->pdo;
     }
 }

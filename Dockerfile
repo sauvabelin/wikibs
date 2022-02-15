@@ -17,5 +17,8 @@ COPY ./MobileFrontend /var/www/html/extensions/MobileFrontend
 # Copy skin
 COPY ./MinervaNeue /var/www/html/skins/MinervaNeue
 
+# Copy logo
+COPY ./logo.png /var/www/html/logo.png
+
 # Copy localSettings
 COPY ./LocalSettings.php /var/www/html/LocalSettings.php
