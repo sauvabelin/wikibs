@@ -65,7 +65,7 @@ $wgEmailAuthentication = true;
 
 $wgDBtype           = genv("DB_TYPE", "mysql");
 $wgDBserver         = genv("DB_SERVER", "localhost");
-$wgDBname           = genv("DB_NAME", "netbs");
+$wgDBname           = genv("DB_NAME", "wiki");
 $wgDBuser           = genv("DB_USER", "root");
 $wgDBpassword       = genv("DB_PASS", "");
 
@@ -143,7 +143,7 @@ require_once './extensions/NetBSAuth/NetBSAuth.php';
 
 $wgAuth    = new NetBSAuth([
     'host'              => $wgDBserver,
-    'database'          => $wgDBname,
+    'database'          => genv("USER_DB_NAME", "netbs"),
     'username'          => $wgDBuser,
     'password'          => $wgDBpassword,
     'table'             => genv("AUTH_TABLE_NAME", "wiki_users"),
