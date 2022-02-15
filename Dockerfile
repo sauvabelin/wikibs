@@ -22,3 +22,5 @@ COPY ./logo.png /var/www/html/logo.png
 
 # Copy localSettings
 COPY ./LocalSettings.php /var/www/html/LocalSettings.php
+
+CMD ["apache2-foreground"]
