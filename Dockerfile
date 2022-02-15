@@ -14,5 +14,8 @@ RUN composer install --working-dir /var/www/html/extensions/NetBSAuth --ignore-p
 # Copy mobile frontend extension
 COPY ./MobileFrontend /var/www/html/extensions/MobileFrontend
 
+# Copy skin
+COPY ./MinervaNeue /var/www/html/skins/MinervaNeue
+
 # Copy localSettings
 COPY ./LocalSettings.php /var/www/html/LocalSettings.php
