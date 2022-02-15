@@ -1,5 +1,5 @@
 {
     "require": {
-        "symfony/security": "^4.4"
+        "symfony/security": "^4.0"
     }
 }
