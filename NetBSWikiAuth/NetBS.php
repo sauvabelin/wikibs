@@ -98,7 +98,7 @@ class NetBS
         if($this->pdo)
             return $this->pdo;
 
-        $this->pdo = new \mysqli($this->database, $this->username, $this->password, $this->database);
+        $this->pdo = new \mysqli($this->host, $this->username, $this->password, $this->database);
         return $this->pdo;
     }
 }
