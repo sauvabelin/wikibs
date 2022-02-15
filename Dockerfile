@@ -5,9 +5,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 VOLUME /var/www/html/images
 
-# Copy extension
-COPY ./NetBSWikiAuth /var/www/html/extensions/NetBSWikiAuth
-RUN composer install --working-dir /var/www/html/extensions/NetBSWikiAuth
+# Copy netbs extension
+COPY ./NetBSWikiAuth /var/www/html/extensions/NetBSAuth
+RUN composer install --working-dir /var/www/html/extensions/NetBSAuth --ignore-platform-reqs
+
+# Copy mobile frontend extension
+COPY ./MobileFrontend /var/www/html/extensions/MobileFrontend
 
 # Copy localSettings
 COPY ./LocalSettings.php /var/www/html/LocalSettings.php
