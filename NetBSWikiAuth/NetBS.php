@@ -78,7 +78,7 @@ class NetBS
 
     public function getUser($username) {
 
-        $select = $this->getPdo()->prepare("SELECT {$this->usernameColumn}, {$this->hashColumn}, {$this->saltColumn}, {$this->isAdminColumn} FROM {$this->table} WHERE username = ?");
+    $select = $this->getPdo()->prepare("SELECT {$this->usernameColumn}, {$this->hashColumn}, {$this->saltColumn}, {$this->isAdminColumn} FROM {$this->table} WHERE {$this->usernameColumn} = ?");
         $select->bind_param('s', $username);
         $select->execute();
 
