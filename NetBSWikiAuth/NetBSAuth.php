@@ -60,11 +60,10 @@ class NetBSAuth extends AuthPlugin
     {
         $netBSUser = $this->netBS->getUser($user->getName());
 
-        if(!$user)
-            return false;
+        if(!$netBSUser)
+                return false;
 
-        if($netBSUser['wiki_admin'] === "1") {
-
+        if((int)$netBSUser['wiki_admin'] === 1) {
             $user->addGroup('sysop');
             $user->addGroup('bureaucrat');
         }
