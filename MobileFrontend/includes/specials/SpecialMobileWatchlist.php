@@ -1,53 +1,49 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\IPUtils;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Implements the Watchlist special page
  */
 class SpecialMobileWatchlist extends MobileSpecialPageFeed {
-	// Performance-safe value with PageImages
+	// Performance-safe value with PageImages. Try to keep in sync with
+	// WatchListGateway.
 	const LIMIT = 50;
 
-	const THUMB_SIZE = MobilePage::SMALL_IMAGE_WIDTH;
 	const VIEW_OPTION_NAME = 'mfWatchlistView';
 	const FILTER_OPTION_NAME = 'mfWatchlistFilter';
 	const VIEW_LIST = 'a-z';
 	const VIEW_FEED = 'feed';
 
-	/** @var string $view Saves, how the watchlist is sorted: a-z or as a feed */
+	/** @var string Saves, how the watchlist is sorted: a-z or as a feed */
 	private $view;
 
-	/**
-	 * Construct function
-	 */
 	public function __construct() {
 		parent::__construct( 'Watchlist' );
 	}
-	/** @var string $filter Saves the actual used filter in feed view */
-	private $filter;
-	/** @var boolean $usePageImages Saves whether display images or not */
-	private $usePageImages;
 
-	/** @var Title $fromPageTitle Saves the Title object of the page list starts from */
-	private $fromPageTitle;
+	/** @var string Saves the actual used filter in feed view */
+	private $filter;
+	/** @var bool Saves whether display images or not */
+	private $usePageImages;
 
 	/**
 	 * Render the special page
-	 * @param string $par parameter submitted as subpage
+	 * @param string|null $par parameter submitted as subpage
 	 */
 	public function executeWhenAvailable( $par ) {
 		// Anons don't get a watchlist
 		$this->requireLogin( 'mobile-frontend-watchlist-purpose' );
-		$this->usePageImages = defined( 'PAGE_IMAGES_INSTALLED' );
+		$this->usePageImages = ExtensionRegistry::getInstance()->isLoaded( 'PageImages' );
 
 		$user = $this->getUser();
 		$output = $this->getOutput();
 		$output->addModules( 'mobile.special.watchlist.scripts' );
 		$output->addModuleStyles( [
-			'mobile.special.watchlist.styles',
 			'mobile.pagelist.styles',
+			"mobile.placeholder.images",
 			'mobile.pagesummary.styles',
 		] );
 		$req = $this->getRequest();
@@ -58,30 +54,44 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 			self::VIEW_FEED : self::VIEW_LIST;
 		$this->view = $req->getVal( 'watchlistview', $defaultView );
 
-		$this->filter = $req->getVal( 'filter', $user->getOption( self::FILTER_OPTION_NAME, 'all' ) );
-		$this->fromPageTitle = Title::newFromText( $req->getVal( 'from', false ) );
+		$userOption = $this->getUserOptionsLookup()->getOption(
+			$user,
+			self::FILTER_OPTION_NAME,
+			'all'
+		);
+		$this->filter = $req->getVal( 'filter', $userOption );
 
 		$output->setPageTitle( $this->msg( 'watchlist' ) );
 
 		if ( $this->view === self::VIEW_FEED ) {
-			$output->addHTML( self::getWatchlistHeader( $user, $this->view, $this->filter ) );
-			$output->addHTML(
-				Html::openElement( 'div', [ 'class' => 'content-unstyled' ] )
-			);
-			$this->showRecentChangesHeader();
 			$res = $this->doFeedQuery();
-
-			if ( $res->numRows() ) {
-				$this->showFeedResults( $res );
-			} else {
-				$this->showEmptyList( true );
-			}
-			$output->addHTML(
-				Html::closeElement( 'div' )
-			);
+			$this->addWatchlistHTML( $res, $user );
 		} else {
 			$output->redirect( SpecialPage::getTitleFor( 'EditWatchlist' )->getLocalURL() );
 		}
+	}
+
+	/**
+	 * Builds the watchlist HTML inside the associated OutputPage
+	 * @param IResultWrapper $res
+	 * @param User $user
+	 */
+	public function addWatchlistHTML( IResultWrapper $res, User $user ) {
+		$output = $this->getOutput();
+		$output->addHTML( self::getWatchlistHeader( $user, $this->view, $this->filter ) );
+		$output->addHTML(
+			Html::openElement( 'div', [ 'class' => 'content-unstyled' ] )
+		);
+		$this->showRecentChangesHeader();
+
+		if ( $res->numRows() ) {
+			$this->showFeedResults( $res );
+		} else {
+			$this->showEmptyList( true );
+		}
+		$output->addHTML(
+			Html::closeElement( 'div' )
+		);
 	}
 
 	/**
@@ -123,10 +133,12 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 	 * @return string Parsed HTML
 	 */
 	public static function getWatchlistHeader( User $user, $view = self::VIEW_LIST, $filter = null ) {
+		$services = MediaWikiServices::getInstance();
 		$sp = SpecialPage::getTitleFor( 'Watchlist' );
 		$attrsList = $attrsFeed = [];
 		if ( $filter === null ) {
-			$filter = $user->getOption( self::FILTER_OPTION_NAME, 'all' );
+			$userOptionsLookup = $services->getUserOptionsLookup();
+			$filter = $userOptionsLookup->getOption( $user, self::FILTER_OPTION_NAME, 'all' );
 		}
 
 		if ( $view === self::VIEW_FEED ) {
@@ -139,9 +151,10 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 			$attrsList[ 'class' ] = MobileUI::buttonClass( 'progressive', 'is-on' );
 		}
 
-		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		$linkRenderer = $services->getLinkRenderer();
 		$html =
-		Html::openElement( 'ul', [ 'class' => 'button-bar mw-ui-button-group' ] ) .
+		Html::openElement( 'ul',
+			[ 'class' => 'mw-mf-watchlist-button-bar mw-ui-button-group' ] ) .
 			Html::openElement( 'li', $attrsList ) .
 			$linkRenderer->makeLink( $sp,
 				wfMessage( 'mobile-frontend-watchlist-a-z' )->text(),
@@ -190,7 +203,7 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 			}
 			$linkAttrs = [
 				'data-filter' => $filter,
-				'href' => $this->getPageTitle()->getLocalUrl(
+				'href' => $this->getPageTitle()->getLocalURL(
 					[
 						'filter' => $filter,
 						'watchlistview' => self::VIEW_FEED,
@@ -211,7 +224,7 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 
 	/**
 	 * Get watchlist items for feed view
-	 * @return ResultWrapper
+	 * @return IResultWrapper
 	 *
 	 * @see getNSConditions()
 	 * @see doPageImages()
@@ -238,7 +251,8 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 			'rc_type!=' . $dbr->addQuotes( RC_EXTERNAL ),
 		];
 		// Filter out category membership changes if configured
-		if ( $user->getBoolOption( 'hidecategorization' ) ) {
+		$userOption = $this->userOptionsLookup->getBoolOption( $user, 'hidecategorization' );
+		if ( $userOption ) {
 			$innerConds[] = 'rc_type!=' . $dbr->addQuotes( RC_CATEGORIZE );
 		}
 		$join_conds = [
@@ -247,52 +261,44 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 				$innerConds,
 			],
 		] + $rcQuery['joins'];
-		$options = [ 'ORDER BY' => 'rc_timestamp DESC' ];
-		$options['LIMIT'] = self::LIMIT;
+		$query_options = [
+			'ORDER BY' => 'rc_timestamp DESC',
+			'LIMIT' => self::LIMIT
+		];
 
-		$rollbacker = $user->isAllowed( 'rollback' );
+		$rollbacker = MediaWikiServices::getInstance()->getPermissionManager()
+			->userHasRight( $user, 'rollback' );
 		if ( $rollbacker ) {
 			$tables[] = 'page';
 			$join_conds['page'] = [ 'LEFT JOIN', 'rc_cur_id=page_id' ];
-			if ( $rollbacker ) {
-				$fields[] = 'page_latest';
-			}
+			$fields[] = 'page_latest';
 		}
 
-		ChangeTags::modifyDisplayQuery( $tables, $fields, $conds, $join_conds, $options, '' );
-		// Until 1.22, MediaWiki used an array here. Since 1.23 (Iec4aab87), it uses a FormOptions
-		// object (which implements array-like interface ArrayAccess).
-		// Let's keep using an array and hope any new extensions are compatible with both styles...
-		$values = [];
-		Hooks::run(
-			'SpecialWatchlistQuery',
-			[ &$conds, &$tables, &$join_conds, &$fields, &$values ]
-		);
+		ChangeTags::modifyDisplayQuery( $tables, $fields, $conds, $join_conds, $query_options, '' );
 
-		$res = $dbr->select( $tables, $fields, $conds, __METHOD__, $options, $join_conds );
-
-		return $res;
+		// @phan-suppress-next-line SecurityCheck-SQLInjection getQueryInfo's $tables & $fields are safe
+		return $dbr->select( $tables, $fields, $conds, __METHOD__, $query_options, $join_conds );
 	}
 
 	/**
 	 * Show results of doFeedQuery
-	 * @param ResultWrapper $res ResultWrapper returned from db
+	 * @param IResultWrapper $res Result wrapper returned from db
 	 *
 	 * @see showResults()
 	 */
-	protected function showFeedResults( ResultWrapper $res ) {
+	protected function showFeedResults( IResultWrapper $res ) {
 		$this->showResults( $res, true );
 	}
 
 	/**
 	 * Render the Watchlist items.
 	 * When ?from not set, adds a link "more" to see the other watchlist items.
-	 * @param ResultWrapper $res ResultWrapper from db
+	 * @param IResultWrapper $res Result wrapper from db
 	 * @param bool $feed Render as feed (true) or list (false) view?
 	 * @todo FIXME: use templates/PageList.html when server side templates
 	 * are available to keep consistent with nearby view
 	 */
-	protected function showResults( ResultWrapper $res, $feed ) {
+	protected function showResults( IResultWrapper $res, $feed ) {
 		$output = $this->getOutput();
 
 		if ( $feed ) {
@@ -300,7 +306,8 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 				$this->showFeedResultRow( $row );
 			}
 		}
-
+		// Close .side-list element opened in renderListHeaderWhereNeeded
+		// inside showFeedResultRow function
 		$output->addHTML( '</ul>' );
 	}
 
@@ -322,7 +329,8 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 	public static function getEmptyListHtml( $feed, $lang ) {
 		$dir = $lang->isRTL() ? 'rtl' : 'ltr';
 
-		$imgUrl = MobileContext::singleton()->getConfig()->get( 'ExtensionAssetsPath' ) .
+		$config = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Config' );
+		$imgUrl = $config->get( 'ExtensionAssetsPath' ) .
 			"/MobileFrontend/images/emptywatchlist-page-actions-$dir.png";
 
 		if ( $feed ) {
@@ -340,7 +348,7 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 		return Html::openElement( 'div', [ 'class' => 'info empty-page' ] ) .
 				$msg .
 				Html::element( 'a',
-					[ 'class' => 'button', 'href' => Title::newMainPage()->getLocalUrl() ],
+					[ 'class' => 'button', 'href' => Title::newMainPage()->getLocalURL() ],
 					wfMessage( 'mobile-frontend-watchlist-back-home' )->plain()
 				) .
 				Html::closeElement( 'div' );
@@ -362,13 +370,14 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 		$this->renderListHeaderWhereNeeded( $date );
 
 		$title = Title::makeTitle( $row->rc_namespace, $row->rc_title );
+		$store = MediaWikiServices::getInstance()->getCommentStore();
 		$comment = $this->formatComment(
-			CommentStore::getStore()->getComment( 'rc_comment', $row )->text, $title
+			$store->getComment( 'rc_comment', $row )->text, $title
 		);
 		$ts = new MWTimestamp( $row->rc_timestamp );
 		$username = $row->rc_user != 0
-			? htmlspecialchars( $row->rc_user_text )
-			: IP::prettifyIP( $row->rc_user_text );
+			? $row->rc_user_text
+			: IPUtils::prettifyIP( $row->rc_user_text );
 		$revId = $row->rc_this_oldid;
 		$bytes = $row->rc_new_len - $row->rc_old_len;
 		$isAnon = $row->rc_user == 0;
@@ -376,10 +385,10 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 
 		if ( $revId ) {
 			$diffTitle = SpecialPage::getTitleFor( 'MobileDiff', $revId );
-			$diffLink = $diffTitle->getLocalUrl();
+			$diffLink = $diffTitle->getLocalURL();
 		} else {
 			// hack -- use full log entry display
-			$diffLink = Title::makeTitle( $row->rc_namespace, $row->rc_title )->getLocalUrl();
+			$diffLink = Title::makeTitle( $row->rc_namespace, $row->rc_title )->getLocalURL();
 		}
 
 		$this->renderFeedItemHtml( $ts, $diffLink, $username, $comment, $title, $isAnon, $bytes,
@@ -396,7 +405,7 @@ class SpecialMobileWatchlist extends MobileSpecialPageFeed {
 		if ( $comment !== '' ) {
 			$comment = Linker::formatComment( $comment, $title );
 			// flatten back to text
-			$comment = Sanitizer::stripAllTags( $comment );
+			$comment = htmlspecialchars( Sanitizer::stripAllTags( $comment ) );
 		}
 		return $comment;
 	}

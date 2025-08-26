@@ -1,4 +1,4 @@
-@import 'mobile.variables';
+@import '../../mobile.less/mobile.variables.less';
 
 @itemPaddingV: 0.8em;
 @titleMarginV: 0.5em;
@@ -7,8 +7,6 @@
 @thumbSpace: @thumbWidth + @thumbGap;
 
 // Pages
-//
-// Styleguide 5.
 
 // Lists of pages
 //
@@ -26,8 +24,6 @@
 //    <div class="title"><h3>New York</h3></div>
 //  </li>
 // </ul>
-//
-// Styleguide 5.2.
 // FIXME: This should be one generic class name only
 .page-list,
 .topic-title-list,
@@ -141,7 +137,7 @@
 }
 
 // FIXME: combine with a similar pattern in modules/NotificationsOverlay.less
-@media all and ( min-width: @deviceWidthTablet ) {
+@media all and ( min-width: @width-breakpoint-tablet ) {
 	// FIXME: this should be one generic class name
 	.page-summary-list,
 	.topic-title-list,

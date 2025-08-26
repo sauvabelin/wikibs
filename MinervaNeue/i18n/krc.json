@@ -1,14 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ernác"
+			"Ernác",
+			"Къарачайлы"
 		]
 	},
 	"mobile-frontend-editor-edit": "Тюрлендир",
-	"mobile-frontend-home-button": "Юйге",
-	"mobile-frontend-language-article-heading": "Башха тилде окъу",
+	"mobile-frontend-history": "Бу бетни тюрлениу тарихин кёр",
+	"mobile-frontend-home-button": "Баш бет",
+	"mobile-frontend-language-article-heading": "Тил",
 	"mobile-frontend-main-menu-button-tooltip": "Баш менюну ач",
-	"mobile-frontend-main-menu-login": "Кириў",
+	"mobile-frontend-main-menu-login": "Кир",
 	"mobile-frontend-main-menu-logout": "Чыгъыу",
 	"mobile-frontend-main-menu-nearby": "Джуўукъда",
 	"mobile-frontend-main-menu-settings": "Джарашдырыўла",
@@ -16,6 +18,6 @@
 	"mobile-frontend-meta-data-issues": "Бу статьяны джетмегенликлери барды",
 	"mobile-frontend-meta-data-issues-header": "Бу статьяны игилендир",
 	"mobile-frontend-pageaction-edit-tooltip": "Бетни алчы бёлюмюн тюрлендир.",
-	"mobile-frontend-placeholder": "{{SITENAME}}да изле",
-	"mobile-frontend-random-button": "Эсде болмагъан бет"
+	"mobile-frontend-placeholder": "{{SITENAME}} изле",
+	"mobile-frontend-random-button": "Рандомлу"
 }

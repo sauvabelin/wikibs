@@ -2,13 +2,13 @@
 
 namespace Tests\MediaWiki\Minerva;
 
-use MediaWiki\Minerva\SkinUserPageHelper;
+use MediaWiki\Minerva\Skins\SkinUserPageHelper;
 use MediaWikiTestCase;
 use Title;
 
 /**
  * @group MinervaNeue
- * @coversDefaultClass MediaWiki\Minerva\SkinUserPageHelper
+ * @coversDefaultClass \MediaWiki\Minerva\Skins\SkinUserPageHelper
  */
 class SkinUserPageHelperTest extends MediaWikiTestCase {
 
@@ -21,7 +21,20 @@ class SkinUserPageHelperTest extends MediaWikiTestCase {
 		$title = Title::newFromText( 'Test Page' );
 
 		$helper = new SkinUserPageHelper( $title );
-		$this->assertEquals( false, $helper->isUserPage() );
+		$this->assertFalse( $helper->isUserPage() );
+	}
+
+	/**
+	 * @covers ::isUserPage
+	 * @covers ::fetchData
+	 * @covers ::__construct
+	 */
+	public function testTitleIsNull() {
+		$title = null;
+
+		$helper = new SkinUserPageHelper( $title );
+		$this->assertNull( $helper->getPageUser() );
+		$this->assertFalse( $helper->isUserPage() );
 	}
 
 	/**
@@ -32,7 +45,43 @@ class SkinUserPageHelperTest extends MediaWikiTestCase {
 		$title = Title::newFromText( 'User:TestUser/subpage' );
 
 		$helper = new SkinUserPageHelper( $title );
-		$this->assertEquals( false, $helper->isUserPage() );
+		$this->assertFalse( $helper->isUserPage() );
+	}
+
+	/**
+	 * @covers ::isUserPage
+	 * @covers ::fetchData
+	 * @covers ::buildPageUserObject
+	 */
+	public function testTitleisAnIP() {
+		$title = Title::newFromText( 'User:127.0.0.1' );
+
+		$helper = new SkinUserPageHelper( $title );
+		$this->assertTrue( $helper->isUserPage() );
+	}
+
+	/**
+	 * @covers ::isUserPage
+	 * @covers ::fetchData
+	 * @covers ::buildPageUserObject
+	 */
+	public function testTitleIsIPRange() {
+		$title = Title::newFromText( 'User:127.0.0.1/24' );
+
+		$helper = new SkinUserPageHelper( $title );
+		$this->assertFalse( $helper->isUserPage() );
+	}
+
+	/**
+	 * @covers ::isUserPage
+	 * @covers ::fetchData
+	 * @covers ::buildPageUserObject
+	 */
+	public function testTitleIsFakeUserPage() {
+		$title = Title::newFromText( 'User:Fake user' );
+
+		$helper = new SkinUserPageHelper( $title );
+		$this->assertFalse( $helper->isUserPage() );
 	}
 
 	/**
@@ -40,6 +89,7 @@ class SkinUserPageHelperTest extends MediaWikiTestCase {
 	 */
 	public function testTitleProcessingIsCached() {
 		$titleMock = $this->getMockBuilder( Title::class )
+			->disableOriginalConstructor()
 			->getMock();
 		$titleMock->expects( $this->once() )
 			->method( 'inNamespace' )
@@ -71,7 +121,7 @@ class SkinUserPageHelperTest extends MediaWikiTestCase {
 		$title = $testUser->getUserPage();
 
 		$helper = new SkinUserPageHelper( $title );
-		$this->assertEquals( true, $helper->isUserPage() );
+		$this->assertTrue( $helper->isUserPage() );
 		$this->assertEquals( $testUser->getId(), $helper->getPageUser()->getId() );
 	}
 
@@ -88,7 +138,7 @@ class SkinUserPageHelperTest extends MediaWikiTestCase {
 		$secondTestUserTitle = $secondTestUser->getUserPage();
 
 		$helper = new SkinUserPageHelper( $secondTestUserTitle );
-		$this->assertEquals( true, $helper->isUserPage() );
+		$this->assertTrue( $helper->isUserPage() );
 		$this->assertNotEquals( $testUser->getId(), $helper->getPageUser()->getId() );
 		$this->assertNotEquals( $helper->getPageUser()->getUserPage(), $testUserTitle );
 	}

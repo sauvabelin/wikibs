@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"A-lú-mih",
 			"Ianbu",
-			"唐吉訶德的侍從",
-			"Luuva"
+			"Luuva",
+			"唐吉訶德的侍從"
 		]
 	},
 	"mobile-frontend-copyright": "Nā bô lēng-gōa kóng, chiàu $1 thang īng.",
@@ -14,6 +15,8 @@
 	"mobile-frontend-terms-text": "欲用的條款",
 	"mobile-frontend-view": "Hêng-tōng bô͘-sek",
 	"mobile-frontend-view-desktop": "Tiān-náu",
-	"tag-mobile_edit": "用手機改",
+	"tag-mobile_edit": "Ēng hêng-tōng pian-chi̍p",
+	"tag-mobile_edit-description": "Tùi hêng-tōng (bāng-ia̍h iā app) chò ê phian-chi̍p",
+	"tag-advanced_mobile_edit": "Sian-chìn hêng-tōng pian-chip",
 	"tag-mobile_web_edit": "tī chhiú-ki-á bāng-ia̍h kái--ê"
 }

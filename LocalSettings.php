@@ -133,7 +133,7 @@ $wgGroupPermissions['user']['editmyprivateinfo'] = false;
 $wgShowExceptionDetails = true;
 $wgShowDBErrorBacktrace = true;
 
-/*
+
 wfLoadSkin( 'Vector' );
 wfLoadSkin( 'MinervaNeue' );
 
@@ -141,7 +141,7 @@ wfLoadSkin( 'MinervaNeue' );
 wfLoadExtension( 'MobileFrontend' );
 $wgMFAutodetectMobileView = true;
 $wgMFDefaultSkinClass = 'SkinMinerva';
-*/
+
 
 wfLoadSkin( 'Vector' );
 

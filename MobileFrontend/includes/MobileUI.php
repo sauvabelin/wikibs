@@ -31,7 +31,7 @@ class MobileUI {
 	 *  with the iconed element
 	 * @return string class name for use with HTML element
 	 */
-	public static function semanticClass( $base, $modifier, $additionalClassNames = '' ) {
+	private static function semanticClass( $base, $modifier, $additionalClassNames = '' ) {
 		$modifier = empty( $modifier ) ? '' : 'mw-ui-' . $modifier;
 		return $base . ' ' . $modifier . ' ' . $additionalClassNames;
 	}
@@ -65,7 +65,7 @@ class MobileUI {
 	 * @return string of html
 	 */
 	public static function contentElement( $html, $className = '' ) {
-		$templateParser = new TemplateParser( __DIR__ );
+		$templateParser = new TemplateParser( __DIR__ . '/templates' );
 		return $templateParser->processTemplate( 'ContentBox', [
 			'className' => $className,
 			'html' => $html,

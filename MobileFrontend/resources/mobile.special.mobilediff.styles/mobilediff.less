@@ -1,14 +1,24 @@
-@import 'mobile.variables';
-@import 'mediawiki.mixins';
+@import '../../mobile.less/mobile.variables.less';
+@import 'mediawiki.mixins.less';
 
 // includes padding as well as enough space for 2 lines of user groups
 @userInfoHeight: 8em;
 @userInfoPadding: 1em;
 
+/* stylelint-disable selector-max-id */
 #mw-mf-page-center {
 	// See https://phabricator.wikimedia.org/T144579#2699879
 	// This prevents the footer margin bottom from collapsing on iOS9.3
 	border-bottom: 1px solid transparent;
+}
+
+.mw-diff-inline-moved {
+	position: relative;
+
+	a[ name^='movedpara' ] {
+		position: absolute;
+		top: -40px;
+	}
 }
 
 // In lieu of no generic way to handle this we reserve space below the footer
@@ -20,27 +30,48 @@ footer {
 // FIXME: Overly specific selector
 #mw-mf-diffarea {
 	.hyphens( auto );
-	padding: 1em 1em ( 2 * @userInfoHeight + 1em );
+	padding: 0 1em ( 2 * @userInfoHeight + 1em );
+}
+
+.diff {
+	.diff-title {
+		display: none;
+	}
+
+	td {
+		padding: 0;
+	}
+
+	ins, del {
+		white-space: pre-wrap;
+	}
 }
 
 #mw-mf-diffview {
-	.meta {
-		font-size: 0.7em;
-		text-transform: uppercase;
-	}
-
 	.mw-mf-diff-date {
 		color: @colorGray7;
+		height: 1em;
+		line-height: 1em;
+		vertical-align: middle;
+		display: inline-block;
 	}
 
-	// FIXME: Overly specific selector
-	#mw-mf-diff-info {
-		line-height: 1em;
+	.mw-mf-diff-info {
 		padding-bottom: 1em;
 	}
 
-	// FIXME: Overly specific selector
-	#mw-mf-diff-comment {
+	.mw-mf-diff-info__link-latest,
+	.mw-mf-diff-info__link-revision {
+		font-size: inherit;
+		line-height: 1.6;
+		font-weight: normal;
+	}
+
+	.mw-mf-diff-info__link-latest {
+		font-weight: bold;
+	}
+
+	.mw-mf-diff-comment {
 		padding-bottom: 1em;
 		font-style: italic;
 	}
@@ -50,23 +81,53 @@ footer {
 		margin-left: 0.5em;
 	}
 
-	ins,
-	del {
+	.mw-diff-inline-added ins,
+	.mw-diff-inline-changed ins,
+	.mw-diff-inline-deleted del,
+	.mw-diff-inline-changed del {
 		color: #000;
+		word-break: break-all;
 		text-decoration: none;
 	}
 
-	span {
+	> span {
 		margin-right: 2px;
 	}
 
-	ins {
+	.mw-diff-inline-added ins,
+	.mw-diff-inline-changed ins {
 		background-color: #75c877;
 	}
 
-	del {
+	.mw-diff-inline-deleted del,
+	.mw-diff-inline-changed del {
 		background-color: #e07076;
 		text-decoration: none;
+	}
+
+	.meta span {
+		// FIXME: Revisited when icons standardised (see I31e96ee6785eb5c634295051159c16445de1165c)
+		margin-left: -1em;
+	}
+
+	#mw-mf-userinfo .meta,
+	.mw-mf-diff-date span,
+	.meta span {
+		font-size: 0.7em;
+		text-transform: uppercase;
+	}
+
+	.mw-diff-inline-moved {
+		background: #ffedcc;
+
+		a {
+			color: #ffa500;
+			display: block;
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
 	}
 
 	.prettyDiff {
@@ -119,7 +180,6 @@ footer {
 
 .revision-history-links {
 	font-size: 0.9em;
-	margin-top: 8px;
 	margin-bottom: 12px;
 
 	.revision-history-next {
@@ -133,3 +193,4 @@ footer {
 		padding-right: 0;
 	}
 }
+/* stylelint-enable selector-max-id */

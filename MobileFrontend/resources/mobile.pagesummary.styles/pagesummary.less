@@ -1,9 +1,7 @@
-@import 'mobile.variables';
+@import '../../mobile.less/mobile.variables.less';
 @import 'mediawiki.mixins.less';
 
 // Pages
-//
-// Styleguide 5.
 
 // Page summary
 //
@@ -15,8 +13,6 @@
 //  <h3>San Francisco</h3>
 //  <p>San Francisco is a city in California in the USA</p>
 // </div>
-//
-// Styleguide 5.1.
 .page-summary {
 	h2,
 	h3 {
@@ -24,6 +20,7 @@
 		font-weight: bold;
 		// FIXME: Use one of the grays defined in variables.less
 		color: @colorGray5;
+
 		a {
 			color: inherit;
 		}
@@ -47,17 +44,19 @@
 	background-repeat: no-repeat;
 	background-position: center center;
 
-	&.list-thumb-none {
-		background-color: @grayLightest;
-		.background-image-svg-quick( 'noimage' );
-	}
-
 	&.list-thumb-x {
-		.background-size( 100%, auto );
+		background-size: 100% auto;
 	}
 
 	&.list-thumb-y {
-		.background-size( auto, 100% );
+		background-size: auto 100%;
+	}
+
+	// Needs to come last as `.list-thumb-x` would override.
+	&.list-thumb-none {
+		background-color: @grayLightest;
+		// Assumes that icon follows standard canvas of 20 x 20px.
+		background-size: 40px 40px;
+		opacity: 0.51; // Equals to `#7d7d7d` on `background-color: #fff`.
 	}
 }
-

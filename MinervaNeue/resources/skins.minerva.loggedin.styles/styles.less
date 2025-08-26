@@ -1,4 +1,4 @@
-@import 'minerva.variables';
+@import '../../minerva.less/minerva.variables.less';
 
 .user-button {
 	// Make sure count is positioned correctly in relation to bell icon
@@ -14,21 +14,20 @@
 	}
 }
 
+// FIXME: Belongs in Echo extension.
 .notification-count {
-	@circleSize: 24px;
-	@borderSize: 2px;
+	display: inline-block;
 	margin: auto;
-	height: @circleSize;
 	background: @notificationBackgroundRead;
 	color: @notificationColorRead;
 	cursor: pointer;
 
 	.circle {
 		border-radius: 50%;
-		border: @borderSize solid @notificationColorRead;
+		border: 2px solid @notificationColorRead;
 		margin: auto;
-		height: @circleSize - @borderSize;
-		width: @circleSize - @borderSize;
+		height: @icon-size-md;
+		width: @icon-size-md;
 
 		/* stylelint-disable declaration-block-no-duplicate-properties */
 		// Center the text number inside the circle
@@ -40,6 +39,7 @@
 		align-items: center;
 		-webkit-box-pack: center;
 		justify-content: center;
+		/* stylelint-enable declaration-block-no-duplicate-properties */
 
 		span {
 			font-weight: bold;
@@ -51,6 +51,7 @@
 
 	&.notification-unseen {
 		color: @notificationColorUnread;
+		padding: @icon-padding-md;
 
 		.circle {
 			background: @notificationBackgroundUnread;

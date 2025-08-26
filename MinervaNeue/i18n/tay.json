@@ -3,18 +3,16 @@
 		"authors": [
 			"Akamycoco",
 			"Corainn",
-			"Hitaypayan"
+			"Hitaypayan",
+			"MinecraftAustralia"
 		]
 	},
 	"minerva-talk-add-topic": "Misan tnwang na spkayal",
-	"minerva-pointer-dismiss": "Ql’iy",
 	"mobile-frontend-editor-edit": "Smr’zyut miru’",
 	"mobile-frontend-editor-redlink-create": "Ps’rux zzngayan",
 	"mobile-frontend-editor-redlink-leave": "Nway kya, mhway su’!",
-	"mobile-frontend-editor-tutorial-cancel": "Nway kya, mhway su’!",
-	"mobile-frontend-editor-tutorial-confirm": "T’aring smr’zyut miru’",
 	"mobile-frontend-home-button": "T’ringan na zzngayan",
-	"mobile-frontend-language-change": "Sbah kay’",
+	"mobile-frontend-language-article-heading": "Kay’",
 	"mobile-frontend-main-menu-button-tooltip": "Gyahiy quw spzyang balay bbzyagan",
 	"mobile-frontend-main-menu-contributions": "Wal miq sa pincyuwagan",
 	"mobile-frontend-main-menu-login": "mzyup",
@@ -29,6 +27,5 @@
 	"mobile-frontend-placeholder": "Hhkangi’ {{SITENAME}}",
 	"mobile-frontend-random-button": "Randon",
 	"mobile-frontend-user-page-contributions": "Wal miq sa pincyuwagan",
-	"mobile-frontend-user-page-talk": "Mpkal",
-	"mobile-frontend-user-page-uploads": "Pawsa’ sa kktan"
+	"mobile-frontend-user-page-talk": "Mpkal"
 }

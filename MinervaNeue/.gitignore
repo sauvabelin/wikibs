@@ -1,9 +1,11 @@
-# JSDuck output
-/docs/
-
+/docs/js/
+/docs/php/
 /node_modules/
 /vendor
 /composer.lock
 /composer.phar
 .DS_Store
-
+/.eslintcache
+/tests/selenium/log
+/tmp
+/.resolve-less-imports

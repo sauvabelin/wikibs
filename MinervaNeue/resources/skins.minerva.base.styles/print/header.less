@@ -1,6 +1,7 @@
 // FIXME: Ensure resources/skins.minerva.base.styles/print.less is removed when promoting
-.header-container {
-	background: @skinContentBgColor !important;
+.header-container,
+.header-container.header-chrome {
+	background: @background-color-base;
 	box-shadow: none !important;
 }
 
@@ -8,6 +9,7 @@
 	border-top: 0;
 	display: block;
 	height: auto;
+	padding: 0 @contentPadding;
 
 	.branding-box {
 		padding-left: 0 !important;
@@ -18,6 +20,7 @@
 		}
 	}
 
+	> nav,
 	> div {
 		display: none !important;
 	}

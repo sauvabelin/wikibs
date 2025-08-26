@@ -4,12 +4,9 @@
  * Provide the Special page "Nearby" with location based articles
  */
 class SpecialNearby extends MobileSpecialPage {
-	/** @var boolean $hasDesktopVersion Does this special page has a desktop version? */
+	/** @var bool Does this special page has a desktop version? */
 	protected $hasDesktopVersion = true;
 
-	/**
-	 * Construct function
-	 */
 	public function __construct() {
 		parent::__construct( 'Nearby' );
 		$this->listed = true;
@@ -17,29 +14,32 @@ class SpecialNearby extends MobileSpecialPage {
 
 	/**
 	 * Render Special Page Nearby
-	 * @param string $par Parameter submitted as subpage
+	 * @param string|null $par Parameter submitted as subpage
 	 */
 	public function executeWhenAvailable( $par = '' ) {
 		$this->setHeaders();
-
 		$output = $this->getOutput();
 		$output->addBodyClasses( 'nearby-accept-pending' );
 		// set config
-		$output->addJsConfigVars( 'wgMFNearbyRange', $this->getMFConfig()->get( 'MFNearbyRange' ) );
-		$output->addModuleStyles( [ 'mobile.nearby.images' ] );
+		$output->addJsConfigVars( [
+			'wgMFNearbyRange' => $this->config->get( 'MFNearbyRange' ),
+		] );
+		$output->addModuleStyles( [ 'mobile.placeholder.images' ] );
 		$output->setPageTitle( $this->msg( 'mobile-frontend-nearby-title' ) );
 
 		$html = Html::openElement( 'div', [ 'id' => 'mf-nearby-info-holder' ] )
 				. Html::element( 'div', [
-					'class' => 'mw-ui-icon mw-ui-icon-element mw-ui-mf-nearby-image-info mw-ui-icon-large icon'
+					'class' => 'mf-nearby-image-info'
 				] )
 				. Html::element( 'h3', [],
 					$this->msg( 'mobile-frontend-nearby-info-heading' )->text() )
 				. Html::element( 'div', [ 'class' => 'desc' ],
 					$this->msg( 'mobile-frontend-nearby-info-description' )->text() )
 				. Html::openElement( 'div', [ 'class' => 'jsonly' ] )
-					. Html::linkButton( $this->msg( 'mobile-frontend-nearby-info-show-button' )->text(),
-						[ 'id' => 'showArticles', 'class' => 'mw-ui-progressive' ] )
+					. Html::element( 'button',
+						[ 'id' => 'showArticles', 'disabled' => true, 'class' => 'mw-ui-button mw-ui-progressive' ],
+						$this->msg( 'mobile-frontend-nearby-info-show-button' )->text()
+					)
 				. Html::closeElement( 'div' )
 			. Html::closeElement( 'div' )
 

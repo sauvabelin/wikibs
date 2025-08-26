@@ -1,10 +1,17 @@
-( function ( M, $ ) {
-	var SearchOverlay = M.require( 'mobile.search/SearchOverlay' ),
-		SearchGateway = M.require( 'mobile.search.api/SearchGateway' ),
-		overlayManager = M.require( 'skins.minerva.scripts/overlayManager' ),
-		searchLogger = M.require( 'mobile.search/MobileWebSearchLogger' ),
-		searchInput = $( '#searchInput' ),
-		placeholder = searchInput.attr( 'placeholder' ),
+module.exports = function () {
+	var
+		// eslint-disable-next-line no-restricted-properties
+		M = mw.mobileFrontend,
+		mobile = M.require( 'mobile.startup' ),
+		SearchOverlay = mobile.search.SearchOverlay,
+		SearchGateway = mobile.search.SearchGateway,
+		overlayManager = mobile.OverlayManager.getSingleton(),
+		searchLogger = mobile.search.MobileWebSearchLogger,
+		// eslint-disable-next-line no-jquery/no-global-selector
+		$searchInput = $( '#searchInput' ),
+		placeholder = $searchInput.attr( 'placeholder' ),
+		// eslint-disable-next-line no-jquery/no-global-selector
+		$searchBar = $( '#searchInput, #searchIcon, .skin-minerva-search-trigger' ),
 		searchRoute = new RegExp( /\/search/ ),
 		searchOverlayInstance;
 
@@ -33,7 +40,7 @@
 				router: overlayManager.router,
 				gatewayClass: SearchGateway,
 				api: new mw.Api(),
-				searchTerm: searchInput.val(),
+				searchTerm: $searchInput.val(),
 				placeholderMsg: placeholder
 			} );
 			searchLogger.register( searchOverlayInstance );
@@ -45,7 +52,7 @@
 	overlayManager.add( searchRoute, getSearchOverlay );
 
 	// Apparently needed for main menu to work correctly.
-	$( '#searchInput, #searchIcon, .skin-minerva-search-trigger' ).prop( 'readonly', true );
+	$searchBar.prop( 'readonly', true );
 
 	/**
 	 * Trigger overlay on touchstart so that the on-screen keyboard on iOS
@@ -53,12 +60,12 @@
 	 * triggered unless the element is already visible.
 	 * Touchstart makes the overlay visible, touchend brings up the keyboard afterwards.
 	 */
-	$( '#searchInput, #searchIcon, .skin-minerva-search-trigger' ).on( 'touchstart click', function ( ev ) {
+	$searchBar.on( 'touchstart click', function ( ev ) {
 		ev.preventDefault();
 		overlayManager.router.navigate( '/search' );
 	} );
 
-	$( '#searchInput, #searchIcon, .skin-minerva-search-trigger' ).on( 'touchend', function ( ev ) {
+	$searchBar.on( 'touchend', function ( ev ) {
 		ev.preventDefault();
 		/**
 		 * Manually triggering focus event because on-screen keyboard only
@@ -70,4 +77,4 @@
 		getSearchOverlay().showKeyboard();
 	} );
 
-}( mw.mobileFrontend, jQuery ) );
+};

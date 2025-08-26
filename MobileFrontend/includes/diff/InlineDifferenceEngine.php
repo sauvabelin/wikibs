@@ -1,8 +1,14 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\SlotRecord;
+use Wikimedia\Assert\Assert;
+
 /**
  * Extends the basic DifferenceEngine from core to enable inline difference view
  * using only one column instead of two column diff system.
+ * @deprecated 1.35.0
  */
 class InlineDifferenceEngine extends DifferenceEngine {
 	/**
@@ -12,8 +18,10 @@ class InlineDifferenceEngine extends DifferenceEngine {
 	 * @return bool
 	 */
 	public function isDeletedDiff() {
-		return $this->mNewRev && $this->mNewRev->isDeleted( Revision::DELETED_TEXT ) ||
-			$this->mOldRev && $this->mOldRev->isDeleted( Revision::DELETED_TEXT );
+		$newRev = $this->getNewRevision();
+		$oldRev = $this->getOldRevision();
+		return ( $newRev && $newRev->isDeleted( RevisionRecord::DELETED_TEXT ) ) ||
+			( $oldRev && $oldRev->isDeleted( RevisionRecord::DELETED_TEXT ) );
 	}
 
 	/**
@@ -25,7 +33,7 @@ class InlineDifferenceEngine extends DifferenceEngine {
 	 */
 	public function isSuppressedDiff() {
 		return $this->isDeletedDiff() &&
-			$this->mNewRev->isDeleted( Revision::DELETED_RESTRICTED );
+			$this->getNewRevision()->isDeleted( RevisionRecord::DELETED_RESTRICTED );
 	}
 
 	/**
@@ -37,11 +45,19 @@ class InlineDifferenceEngine extends DifferenceEngine {
 	 */
 	public function isUserAllowedToSee() {
 		$user = $this->getUser();
-		$allowed = $this->mNewRev->userCan( Revision::DELETED_TEXT, $user );
-		if ( $this->mOldRev &&
-			!$this->mOldRev->userCan( Revision::DELETED_TEXT, $user )
-		) {
-			$allowed = false;
+		$allowed = RevisionRecord::userCanBitfield(
+			$this->getNewRevision()->getVisibility(),
+			RevisionRecord::DELETED_TEXT,
+			$user
+		);
+		if ( $this->getOldRevision() ) {
+			if ( !RevisionRecord::userCanBitfield(
+				$this->getOldRevision()->getVisibility(),
+				RevisionRecord::DELETED_TEXT,
+				$user
+			) ) {
+				$allowed = false;
+			}
 		}
 		return $allowed;
 	}
@@ -61,14 +77,17 @@ class InlineDifferenceEngine extends DifferenceEngine {
 		$unhide = (bool)$this->getRequest()->getVal( 'unhide' );
 		$diff = $this->getDiffBody();
 
-		$rev = Revision::newFromId( $this->getNewid() );
-
 		if ( !$prevId ) {
-			$audience = $unhide ? Revision::FOR_THIS_USER : Revision::FOR_PUBLIC;
+			$audience = $unhide ? RevisionRecord::FOR_THIS_USER : RevisionRecord::FOR_PUBLIC;
+			$revRecord = MediaWikiServices::getInstance()
+				->getRevisionLookup()
+				->getRevisionById( $this->getNewId() );
+			$content = $revRecord->getContent( SlotRecord::MAIN, $audience, $this->getUser() );
+
 			$diff = '<ins>'
 				. nl2br(
 					htmlspecialchars(
-						ContentHandler::getContentText( $rev->getContent( $audience ) )
+						ContentHandler::getContentText( $content )
 					)
 				)
 				. '</ins>';
@@ -92,6 +111,7 @@ class InlineDifferenceEngine extends DifferenceEngine {
 			'</div>'
 		);
 
+		// @phan-suppress-next-line SecurityCheck-XSS getPatrolledLink's output is safe
 		$output->addHTML( Html::rawElement(
 			'div',
 			[
@@ -135,8 +155,9 @@ class InlineDifferenceEngine extends DifferenceEngine {
 			// current one and set the title object (which we can get from the new revision).
 			// Bug: T122984
 			$context = new DerivativeContext( $this->getContext() );
-			$revision = $this->mNewRev;
-			$context->setTitle( $revision->getTitle() );
+			$context->setTitle(
+				Title::newFromLinkTarget( $this->getNewRevision()->getPageAsLinkTarget() )
+			);
 
 			if ( !$allowed ) {
 				$msg = $context->msg(
@@ -155,6 +176,16 @@ class InlineDifferenceEngine extends DifferenceEngine {
 		return $msg;
 	}
 
+	/** @inheritDoc */
+	public function generateContentDiffBody( Content $old, Content $new ) {
+		Assert::parameterType( TextContent::class, $old, '$old' );
+		Assert::parameterType( TextContent::class, $new, '$new' );
+
+		$otext = $old->serialize();
+		$ntext = $new->serialize();
+		return $this->generateTextDiffBody( $otext, $ntext );
+	}
+
 	/**
 	 * Creates an inline diff
 	 * @param string $otext Old content
@@ -164,10 +195,11 @@ class InlineDifferenceEngine extends DifferenceEngine {
 	 * @return string
 	 */
 	public function generateTextDiffBody( $otext, $ntext ) {
-		global $wgContLang;
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 
 		// First try wikidiff2
 		if ( function_exists( 'wikidiff2_inline_diff' ) ) {
+			// @phan-suppress-next-line PhanUndeclaredFunction
 			$text = wikidiff2_inline_diff( $otext, $ntext, 2 );
 			$text .= $this->debug( 'wikidiff2-inline' );
 
@@ -175,11 +207,11 @@ class InlineDifferenceEngine extends DifferenceEngine {
 		}
 
 		// Else slow native PHP diff
-		$ota = explode( "\n", $wgContLang->segmentForDiff( $otext ) );
-		$nta = explode( "\n", $wgContLang->segmentForDiff( $ntext ) );
+		$ota = explode( "\n", $contLang->segmentForDiff( $otext ) );
+		$nta = explode( "\n", $contLang->segmentForDiff( $ntext ) );
 		$diffs = new Diff( $ota, $nta );
 		$formatter = new InlineDiffFormatter();
-		return $wgContLang->unsegmentForDiff( $formatter->format( $diffs ) );
+		return $contLang->unsegmentForDiff( $formatter->format( $diffs ) );
 	}
 
 	/**
@@ -195,13 +227,13 @@ class InlineDifferenceEngine extends DifferenceEngine {
 	/**
 	 * Create a getter function for the patrol link in Mobile Diff.
 	 * FIXME: This shouldn't be needed, but markPatrolledLink is protected in DifferenceEngine
-	 * @return String
+	 * @return string
 	 */
 	public function getPatrolledLink() {
 		$linkInfo = $this->getMarkPatrolledLinkInfo();
 		if ( $linkInfo ) {
 			$linkInfo = Html::linkButton(
-				$this->msg( 'markaspatrolleddiff' )->escaped(),
+				$this->msg( 'markaspatrolleddiff' )->text(),
 				[
 					'href' => $this->mNewPage->getLocalURL( [
 						'action' => 'markpatrolled',

@@ -5,6 +5,7 @@ use MediaWiki\Diff\WordAccumulator;
 /**
  * Extends standard Table-formatted DiffFormatter of core to enable Inline-Diff
  * format of MF with only one column.
+ * @deprecated 1.35.0
  */
 class InlineDiffFormatter extends TableDiffFormatter {
 	/**
@@ -130,8 +131,7 @@ class InlineDiffFormatter extends TableDiffFormatter {
 				$inline->addWords( $edit->closing, 'ins' );
 			}
 		}
-		$lines = $inline->getLines();
 
-		return $lines;
+		return $inline->getLines();
 	}
 }

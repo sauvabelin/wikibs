@@ -10,10 +10,10 @@ $specialPageAliases = [];
 
 /** English (English) */
 $specialPageAliases['en'] = [
+	'Uploads' => [ 'Uploads' ],
 	'History' => [ 'History' ],
 	'MobileCite' => [ 'MobileCite' ],
 	'MobileOptions' => [ 'MobileOptions' ],
-	'Uploads' => [ 'Uploads' ],
 	'MobileDiff' => [ 'MobileDiff' ],
 	'MobileMenu' => [ 'MobileMenu' ],
 	'MobileLanguages' => [ 'MobileLanguages' ],
@@ -354,12 +354,40 @@ $specialPageAliases['scn'] = [
 	'MobileOptions' => [ 'OpzioniMobile' ],
 ];
 
+/** Slovak (slovenčina) */
+$specialPageAliases['sk'] = [
+	'History' => [ 'História', 'Historia' ],
+	'MobileCite' => [ 'Mobilná_citácia', 'MobilnáCitácia', 'Mobilna_citacia', 'MobilnaCitacia' ],
+	'MobileOptions' => [ 'Mobilné_nastavenia', 'MobilnéNastavenia', 'Mobilne_nastavenia', 'MobilneNastavenia' ],
+	'Uploads' => [ 'Nahrané_súbory', 'NahranéSúbory', 'Nahrane_subory', 'NahraneSubory' ],
+	'MobileDiff' => [ 'Mobilný_rozdiel', 'MobilnýRozdiel', 'Mobilny_rozdiel', 'MobilnyRozdiel' ],
+	'MobileMenu' => [ 'Mobilné_menu', 'MobilnéMenu', 'Mobilne_menu', 'MobilneMenu' ],
+	'MobileLanguages' => [ 'Mobilné_jazyky', 'MobilnéJazyky', 'Mobilne_jazyky', 'MobilneJazyky' ],
+	'Nearby' => [ 'V_okolí', 'VOkolí', 'V_okoli', 'VOkoli' ],
+];
+
 /** Serbian (Cyrillic script) (српски (ћирилица)‎) */
 $specialPageAliases['sr-ec'] = [
 	'History' => [ 'Историја' ],
-	'MobileOptions' => [ 'МобилнаПодешавања' ],
+	'MobileCite' => [ 'МобилнеРеференце', 'Мобилне_референце' ],
+	'MobileOptions' => [ 'МобилнаПодешавања', 'Мобилна_подешавања' ],
 	'Uploads' => [ 'Отпремања' ],
-	'MobileMenu' => [ 'МобилниМени' ],
+	'MobileDiff' => [ 'МобилнеРазлике', 'Мобилне_разлике' ],
+	'MobileMenu' => [ 'МобилниМени', 'Мобилни_мени' ],
+	'MobileLanguages' => [ 'МобилниЈезици', 'Мобилни_језици' ],
+	'Nearby' => [ 'У_близини', 'Близу', 'Оближње' ],
+];
+
+/** Serbian (Latin script) (srpski (latinica)‎) */
+$specialPageAliases['sr-el'] = [
+	'History' => [ 'Istorija' ],
+	'MobileCite' => [ 'MobilneReference', 'Mobilne_reference' ],
+	'MobileOptions' => [ 'MobilnaPodešavanja', 'Mobilna_podešavanja' ],
+	'Uploads' => [ 'Otpremanja' ],
+	'MobileDiff' => [ 'MobilneRazlike', 'Mobilne_razlike' ],
+	'MobileMenu' => [ 'MobilniMeni', 'Mobilni_meni' ],
+	'MobileLanguages' => [ 'MobilniJezici', 'Mobilni_jezici' ],
+	'Nearby' => [ 'U_blizini', 'Blizu', 'Obližnje' ],
 ];
 
 /** Swedish (svenska) */
@@ -369,6 +397,11 @@ $specialPageAliases['sv'] = [
 	'MobileMenu' => [ 'Mobil_meny' ],
 	'MobileLanguages' => [ 'Mobil_språk' ],
 	'Nearby' => [ 'Nära' ],
+];
+
+/** Turkish (Türkçe) */
+$specialPageAliases['tr'] = [
+	'Nearby' => [ 'Yakınımdakiler' ],
 ];
 
 /** Ukrainian (українська) */

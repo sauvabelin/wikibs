@@ -1,14 +1,10 @@
-@import 'minerva.variables';
-@import 'minerva.mixins';
+@import '../../minerva.less/minerva.variables.less';
+@import '../../minerva.less/minerva.mixins.less';
 
+// stylelint-disable selector-max-id
 .page-Main_Page {
 	#section_0 {
 		border: 0;
-	}
-
-	#page-actions,
-	.pre-content {
-		display: none;
 	}
 
 	&.is-authenticated {
@@ -17,9 +13,8 @@
 		}
 	}
 
-	#page-secondary-actions {
-		.language-selector {
-			margin-top: 1em;
-		}
+	#page-secondary-actions a {
+		margin-top: 1em;
 	}
 }
+// stylelint-enable selector-max-id

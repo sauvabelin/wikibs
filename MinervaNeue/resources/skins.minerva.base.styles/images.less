@@ -1,11 +1,11 @@
-@import 'minerva.variables.less';
-@import 'minerva.mixins.less';
-@import 'mediawiki.mixins.animation';
+@import '../../minerva.less/minerva.variables.less';
+@import '../../minerva.less/minerva.mixins.less';
 
-@animationDuration: 0.3s;
 @placeholderBackgroundColor: @grayLightest;
 
 .lazy-image-placeholder {
+	background-color: @placeholderBackgroundColor;
+
 	// If the placeholder itself is inside an inline element do not use block
 	// See https://phabricator.wikimedia.org/T143558
 	// and https://phabricator.wikimedia.org/T144567
@@ -19,35 +19,9 @@
 		display: none;
 	}
 
-	background-color: @placeholderBackgroundColor;
-
 	// In order to avoid reflows placeholder needs to be inline-block
 	// Otherwise display block will always take up the full line
 	// instead of allowing text before and after
 	// see T146298
 	display: inline-block;
-}
-
-// When the image has loaded transition background color and image opacity
-// for a fade-in effect
-img.image-lazy-loaded {
-	.animation( fadeInImage @animationDuration ease-in );
-}
-
-@-webkit-keyframes fadeInImage {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
-@keyframes fadeInImage {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
 }

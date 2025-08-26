@@ -11,6 +11,7 @@ When(/^I see the issues overlay$/) do
 end
 
 When(/^this page has issues$/) do
+  on(ArticlePage).wait_until_rl_module_ready('skins.minerva.scripts')
   on(ArticlePage).issues_stamp_element.when_present
 end
 

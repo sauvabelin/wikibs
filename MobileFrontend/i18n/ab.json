@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Irus"
+			"Irus",
+			"Fraxinus.cs"
 		]
 	},
-	"mobile-frontend-view-desktop": "Арабочиҧқә"
+	"mobile-frontend-terms-text": "Ахархәаразы аԥҟарақәа",
+	"mobile-frontend-view": "Амобилтә версиа",
+	"mobile-frontend-view-desktop": "Аусурҭатә еишәа"
 }
