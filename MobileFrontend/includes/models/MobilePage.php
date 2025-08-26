@@ -1,58 +1,50 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionRecord;
+
 /**
  * Retrieves information specific to a mobile page
- * Currently this only provides helper functions for loading PageImage associated with a page
- * @todo FIXME: Rename when this class when its purpose becomes clearer
+ * Currently this only provides helper functions for creating Page Thumbnail
+ * @todo FIXME: Rename this class when its purpose becomes clearer
  */
 class MobilePage {
 	const SMALL_IMAGE_WIDTH = 150;
 	const TINY_IMAGE_WIDTH = 80;
 
 	/**
-	 * @var Title: Title for page
+	 * @var Title Title for page
 	 */
 	private $title;
 	/**
-	 * @var Revision|bool
+	 * @var RevisionRecord|bool|null
 	 */
-	private $rev;
+	private $rev = false;
 	/**
 	 * @var string|bool
 	 */
 	private $revisionTimestamp;
 	/**
-	 * @var File Associated page image file (see PageImages extension)
+	 * @var File|false Associated page image file (see PageImages extension)
 	 */
 	private $file;
-	/**
-	 * @var boolean Whether to use page images
-	 */
-	private $usePageImages;
 
 	/**
 	 * @param Title $title Page title
-	 * @param File|bool $file Page image file
+	 * @param File|false $file Page image file
 	 */
 	public function __construct( Title $title, $file = false ) {
 		$this->title = $title;
-		// @todo FIXME: check existence
-		if ( defined( 'PAGE_IMAGES_INSTALLED' ) ) {
-			$this->usePageImages = true;
-			$this->file = $file ? $file : PageImages::getPageImage( $title );
-		}
+		$this->file = $file;
 	}
 
 	/**
-	 * @return Revision|bool
+	 * @return RevisionRecord|null
 	 */
 	private function getRevision() {
-		if ( $this->rev === null ) {
-			$this->rev = Revision::newKnownCurrent(
-				wfGetDB( DB_REPLICA ),
-				$this->title->getArticleID(),
-				$this->title->getLatestRevID()
-			);
+		if ( $this->rev === false ) {
+			$this->rev = MediaWikiServices::getInstance()->getRevisionStore()
+				->getRevisionByTitle( $this->title );
 		}
 		return $this->rev;
 	}
@@ -93,11 +85,12 @@ class MobilePage {
 		];
 		if ( $rev ) {
 			$edit['timestamp'] = wfTimestamp( TS_UNIX, $rev->getTimestamp() );
-			$userId = $rev->getUser();
-			if ( $userId ) {
-				$revUser = User::newFromId( $userId );
+			$userIdentity = $rev->getUser();
+			if ( $userIdentity ) {
+				$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+				$revUser = User::newFromIdentity( $userIdentity );
 				$edit['name'] = $revUser->getName();
-				$edit['gender'] = $revUser->getOption( 'gender' );
+				$edit['gender'] = $userOptionsLookup->getOption( $revUser, 'gender' );
 			}
 		}
 		return $edit;
@@ -127,7 +120,7 @@ class MobilePage {
 	/**
 	 * Check whether a page has a thumbnail associated with it
 	 *
-	 * @return Boolean whether the page has an image associated with it
+	 * @return bool whether the page has an image associated with it
 	 */
 	public function hasThumbnail() {
 		return $this->file ? true : false;
@@ -146,38 +139,35 @@ class MobilePage {
 	/**
 	 * Get the thumbnail container for getMediumThumbnailHtml() and getSmallThumbnailHtml().
 	 *
-	 * @param integer $size the width of the thumbnail
-	 * @param boolean $useBackgroundImage Whether the thumbnail should have a background image
+	 * @param int $size the width of the thumbnail
+	 * @param bool $useBackgroundImage Whether the thumbnail should have a background image
 	 * @return string
 	 */
 	private function getPageImageHtml( $size, $useBackgroundImage = false ) {
-		$imageHtml = '';
-		// FIXME: Use more generic classes - no longer restricted to lists
-		if ( $this->usePageImages ) {
-			$file = $this->file;
-			if ( $file ) {
-				$thumb = $file->transform( [ 'width' => $size ] );
-				if ( $thumb && $thumb->getUrl() ) {
-					$className = 'list-thumb ';
-					$className .= $thumb->getWidth() > $thumb->getHeight()
-						? 'list-thumb-y'
-						: 'list-thumb-x';
-					$props = [
-						'class' => $className,
-					];
-
-					$imgUrl = wfExpandUrl( $thumb->getUrl(), PROTO_CURRENT );
-					if ( $useBackgroundImage ) {
-						$props['style'] = 'background-image: url("' . wfExpandUrl( $imgUrl, PROTO_CURRENT ) . '")';
-						$text = '';
-					} else {
-						$props['src'] = $imgUrl;
-						$text = $this->title->getText();
-					}
-					$imageHtml = Html::element( $useBackgroundImage ? 'div' : 'img', $props, $text );
-				}
-			}
+		if ( !$this->file ) {
+			return '';
 		}
-		return $imageHtml;
+		// FIXME: Use more generic classes - no longer restricted to lists
+		$thumb = $this->file->transform( [ 'width' => $size ] );
+		if ( $thumb && $thumb->getUrl() ) {
+			$className = 'list-thumb ';
+			$className .= $thumb->getWidth() > $thumb->getHeight()
+				? 'list-thumb-y'
+				: 'list-thumb-x';
+			$props = [
+				'class' => $className,
+			];
+
+			$imgUrl = wfExpandUrl( $thumb->getUrl(), PROTO_CURRENT );
+			if ( $useBackgroundImage ) {
+				$props['style'] = 'background-image: url("' . wfExpandUrl( $imgUrl, PROTO_CURRENT ) . '")';
+				$text = '';
+			} else {
+				$props['src'] = $imgUrl;
+				$text = $this->title->getText();
+			}
+			return Html::element( $useBackgroundImage ? 'div' : 'img', $props, $text );
+		}
+		return '';
 	}
 }

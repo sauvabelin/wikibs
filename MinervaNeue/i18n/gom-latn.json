@@ -5,8 +5,11 @@
 		]
 	},
 	"mobile-frontend-editor-edit": "Bodol",
+	"mobile-frontend-editor-redlink-leave": "Naka, Dev borem korum.",
+	"mobile-frontend-history": "Hea panacho sompadonacho itihas polloi.",
 	"mobile-frontend-home-button": "Ghora",
-	"mobile-frontend-language-article-heading": "Dusrea bhasen vach",
+	"mobile-frontend-language-article-heading": "Bhas",
+	"mobile-frontend-logged-in-homepage-notification": "{{GENDER:$1|Ievkar}}, $1!",
 	"mobile-frontend-main-menu-button-tooltip": "Mukhel suchi ugod",
 	"mobile-frontend-main-menu-login": "Sotrorombh kor",
 	"mobile-frontend-main-menu-nearby": "Lagshilim",
@@ -14,5 +17,5 @@
 	"mobile-frontend-main-menu-watchlist": "Sadurvolleri",
 	"mobile-frontend-pageaction-edit-tooltip": "Hea panacho mukhel bhag bodol",
 	"mobile-frontend-placeholder": "{{SITENAME}}-ant sod",
-	"mobile-frontend-random-button": "Khoimchem-i adlem modlem"
+	"mobile-frontend-random-button": "Khoimcheim adlem modlem"
 }

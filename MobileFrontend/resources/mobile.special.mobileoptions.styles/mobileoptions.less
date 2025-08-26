@@ -1,16 +1,19 @@
-@import 'mobile.variables';
+@import '../../mobile.less/mobile.variables.less';
 
 /*
 SETTINGS PAGE
 */
+/* stylelint-disable selector-max-id */
 .client-js {
 	// toast will be shown in JS mode.
 	.successbox {
 		display: none;
 	}
+
 	#mw-mf-settings-save {
 		display: none;
 	}
+
 	// Checkboxes in form will be upgraded to toggle switches with JS
 	// Minimise FOUC
 	#mobile-options .oo-ui-checkboxInputWidget {
@@ -27,7 +30,7 @@ form.mw-mf-settings {
 		font-weight: bold;
 	}
 
-	.option-description {
+	.option-description, .option-links {
 		font-weight: normal;
 		font-size: 0.8em;
 		padding-right: 8px;
@@ -47,6 +50,21 @@ form.mw-mf-settings {
 
 	.mobile-options-feedback {
 		margin-top: 10px !important;
+	}
+
+	#amc-field {
+		.hlist {
+			padding-top: 0.4em;
+
+			> li {
+				margin-right: 15px;
+			}
+		}
+
+		.option-links {
+			// margin should be same as margin applied to .oo-ui-fieldLayout-body
+			margin: 0 16px;
+		}
 	}
 
 	#beta-field {
@@ -83,17 +101,29 @@ form.mw-mf-settings {
 
 	.oo-ui-fieldLayout-body {
 		margin-bottom: 40px;
-	}
+		display: flex; // Work around for T180652
+		align-items: center;
 
-	// Work around for T180652
-	.oo-ui-fieldLayout-header {
-		width: 65% !important;
-	}
-	.oo-ui-fieldLayout-field {
-		width: 30% !important;
-		text-align: right;
-		.oo-ui-widget {
-			text-align: left;
+		// make parent expand to include floats
+		&:before,
+		&:after {
+			content: '';
+			display: table;
+		}
+
+		&:after {
+			clear: both;
 		}
 	}
+
+	.oo-ui-fieldLayout-header {
+		flex-grow: 1;
+		width: auto !important; // Work around for T180652
+		padding-right: 1.5em !important; // overriding OOUI style for T214195
+	}
+
+	.oo-ui-fieldLayout-field {
+		width: auto !important; // Work around for T180652
+	}
 }
+/* stylelint-enable selector-max-id */

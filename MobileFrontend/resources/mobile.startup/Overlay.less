@@ -1,15 +1,19 @@
-@import 'mobile.variables';
+@import '../../mobile.less/mobile.variables.less';
+@import '../../mobile.less/mobile.mixins.less';
 
 /* stylelint-disable no-descending-specificity */
 
 .overlay-enabled {
+	// stylelint-disable-next-line selector-max-id
 	#mw-mf-page-center {
 		overflow: hidden;
 		// FIXME: override old overlay styles, remove when old overlays gone
 		display: block;
 	}
 
-	.overlay, #mw-mf-page-center {
+	// stylelint-disable-next-line selector-max-id
+	.overlay,
+	#mw-mf-page-center {
 		// use height instead of bottom 0 so that overlay expands when there's
 		// more content, don't use min-height because of
 		// http://stackoverflow.com/questions/3808512/the-inherited-height-of-a-child-div-from-a-parent-with-a-min-height-attribute
@@ -17,9 +21,11 @@
 	}
 }
 
+.hidden {
+	display: none !important;
+}
+
 // Overlays
-//
-// Styleguide 7.
 
 // Overlays (read only)
 //
@@ -28,21 +34,19 @@
 // warning him or her when an event occurs.
 //
 // Markup:
-// <div class="overlay-enabled">
+// <html class="overlay-enabled">
 //   <div class="overlay visible">
 //     <div class="overlay-header-container visible">
 //       <div class="overlay-header">
 //         <ul>
-//          <li><button class="cancel icon">Close</button></li>
+//           <li><button class="cancel icon">Close</button></li>
 //         </ul>
 //         <div class="overlay-title"><h2>Overlay</h2></div>
 //       </div>
 //     </div>
 //     <div class="content">Overlay with no icon.</div>
 //   </div>
-// </div>
-//
-// Styleguide 7.1.
+// </html>
 
 // Overlays (primary)
 //
@@ -52,24 +56,22 @@
 // after pressing the "Next" button.
 //
 // Markup:
-// <div class="overlay-enabled">
+// <html class="overlay-enabled">
 //   <div class="overlay visible">
 //     <div class="overlay-header-container visible">
 //       <div class="overlay-header">
 //         <ul>
-//          <li><button class="cancel icon">Close</button></li>
+//           <li><button class="cancel icon">Close</button></li>
 //         </ul>
 //         <div class="overlay-title"><h2>Overlay</h2></div>
 //         <ul>
-//          <li><button class="continue icon">Continue</button></li>
+//           <li><button class="continue icon">Continue</button></li>
 //         </ul>
 //       </div>
 //     </div>
 //     <div class="content">Overlay with progressive action.</div>
 //   </div>
-// </div>
-//
-// Styleguide 7.2.
+// </html>
 
 // Overlays
 //
@@ -79,7 +81,7 @@
 // presses the "Submit" button.
 //
 // Markup:
-// <div class="overlay-enabled">
+// <html class="overlay-enabled">
 //   <div class="overlay visible">
 //     <div class="overlay-header-container visible">
 //       <div class="overlay-header">
@@ -92,9 +94,7 @@
 //     </div>
 //     <div class="content">Overlay with completion action.</div>
 //   </div>
-// </div>
-//
-// Styleguide 7.3.
+// </html>
 .overlay {
 	position: absolute;
 	top: 0;
@@ -109,10 +109,12 @@
 	}
 
 	input, textarea {
-		padding: 0.5em;
+		// Without declaring a minimum font-size of 16px, iOS will autozoom in on textareas when clicked (T215619)
+		// https://blog.osmosys.asia/2017/01/05/prevent-ios-from-zooming-in-on-input-fields/
+		font-size: 16px;
 	}
 
-	// FIXME: Use generic class for these input fields - can't use .panel currently due to LanguageOverlay
+	// FIXME: Use generic class for these input fields - can't use .panel currently due to languageOverlay
 	.captcha-word,
 	.summary {
 		margin: 0 0 0.7em;
@@ -131,15 +133,6 @@
 		border-bottom: 1px solid @grayLightest;
 	}
 
-	.content {
-		// AbuseFilterOverlay
-		// FIXME: Don't hijack formatting of all cancel buttons just to center some
-		.cancel {
-			display: block;
-			margin: 1em auto;
-		}
-	}
-
 	// Appears before the content providing an explanation of what follows
 	// Only used on overlays in beta (nearby pages)- may not want to push to stable
 	.content-header {
@@ -149,34 +142,9 @@
 		padding-bottom: 20px;
 		line-height: inherit;
 	}
-
-	@buttonWidth: 40px;
-	.slider-button {
-		position: absolute;
-		top: 0;
-		width: @buttonWidth;
-		bottom: 0;
-		z-index: @z-indexOverlay;
-
-		&.prev {
-			left: 0;
-		}
-
-		&.next {
-			right: 1em;
-		}
-
-		// vertically align icon.
-		> * {
-			position: absolute;
-			top: 50%;
-			margin-top: -50%;
-		}
-	}
 }
 
 .overlay-header {
-
 	.overlay-title {
 		// Expand the title as wide as possible to limit the size of the
 		// header-action. (Both are displayed as table-cells.)
@@ -186,23 +154,6 @@
 	.header-action {
 		a,
 		button {
-			display: table-cell;
-			vertical-align: middle;
-			width: auto;
-			padding: 0 1.2em;
-			font-weight: bold;
-			// do not wrap button text
-			white-space: nowrap;
-			// links doesn't need an underline
-			text-decoration: none;
-			border-radius: 0;
-			cursor: pointer;
-			position: relative;
-
-			&:before {
-				top: 0;
-			}
-
 			&[ disabled ] {
 				opacity: 0.5;
 			}
@@ -211,15 +162,36 @@
 				outline: 0;
 			}
 		}
+
+		// FIXME: Overlay buttons should be given the mw-ui-button class instead
+		// of re-implementing it's properties here.
+		.continue,
+		.submit,
+		.progressive {
+			background-color: @colorProgressive;
+			color: #fff;
+			width: auto;
+			display: table-cell;
+			vertical-align: middle;
+
+			&:not( .mw-ui-icon-element ) {
+				padding: 0 1.2em;
+			}
+
+			&[ disabled ] {
+				background-color: @colorGray12;
+				opacity: 1;
+			}
+		}
+
+		// Some overlays e.g. NotificationOverlay use an OOUI icon as the header action.
+		.oo-ui-widget {
+			margin-right: @iconGutterWidth;
+		}
 	}
 
 	button {
 		cursor: pointer;
-	}
-
-	.continue {
-		background-color: @colorProgressive;
-		color: #fff;
 	}
 
 	.submit {
@@ -267,6 +239,7 @@
 	z-index: @z-indexOverOverlay;
 
 	&.position-fixed {
+		position: fixed;
 		// both top and left required for Android 2 for the element to be visible
 		left: 0;
 		// the following right: 0 is converted to left: 0 for RTL languages
@@ -290,6 +263,7 @@
 		// The 1em bottom whitespace is applied as padding since Chrome and Safari ignore
 		// it otherwise. The 10px padding corresponds with the icon margin.
 		padding: 1em 1em 1em 10px;
+		line-height: 1em;
 		text-align: center;
 	}
 }
@@ -313,8 +287,6 @@
 //   </div>
 //   <div class="content"></div>
 // </div>
-//
-// Styleguide 7.4.
 .overlay-bottom {
 	border-top: 1px solid @grayLight;
 	top: auto;
@@ -327,26 +299,7 @@
 	}
 }
 
-.overlay-ios {
-	.overlay-header-container {
-		position: absolute !important;
-		// see T156509
-		top: 1px;
-	}
-
-	.overlay-footer-container {
-		position: absolute !important;
-	}
-
-	.overlay-content {
-		// has to be scroll, not auto
-		overflow-y: scroll;
-		// smoother scrolling (with momentum) on iOS
-		-webkit-overflow-scrolling: touch;
-	}
-}
-
-@media all and ( min-width: @deviceWidthTablet ) {
+@media all and ( min-width: @width-breakpoint-tablet ) {
 	.overlay {
 		.panel {
 			padding-top: 12px;

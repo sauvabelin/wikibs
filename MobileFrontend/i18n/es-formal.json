@@ -1,10 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajp529",
 			"Baffo",
-			"Ajp529"
+			"KATRINE1993",
+			"Fitoschido"
 		]
 	},
-	"mobile-frontend-donate-image-title-username": "Subidos por $1",
-	"mobile-frontend-talk-fullpage": "Leer como página wiki"
+	"mobile-frontend-nearby-location-unavailable": "{{SITENAME}} no puede determinar su ubicación. Inténtelo otra vez cuando haya una mejor señal.",
+	"mobile-frontend-watchlist-error": "Ocurrió un problema al añadir esta página a la lista de seguimiento. Inténtelo de nuevo.",
+	"tag-mobile_edit": "Edición desde móvil",
+	"tag-mobile_web_edit": "Edición vía web móvil"
 }

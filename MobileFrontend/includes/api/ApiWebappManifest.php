@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Return the webapp manifest for this wiki
  */
@@ -9,23 +11,25 @@ class ApiWebappManifest extends ApiBase {
 	 * Execute the requested Api actions.
 	 */
 	public function execute() {
+		$services = MediaWikiServices::getInstance();
+
 		$config = $this->getConfig();
 		$resultObj = $this->getResult();
 		$resultObj->addValue( null, 'name', $config->get( 'Sitename' ) );
 		$resultObj->addValue( null, 'orientation', 'portrait' );
-		$resultObj->addValue( null, 'dir', $config->get( 'ContLang' )->getDir() );
+		$resultObj->addValue( null, 'dir', $services->getContentLanguage()->getDir() );
 		$resultObj->addValue( null, 'lang', $config->get( 'LanguageCode' ) );
 		$resultObj->addValue( null, 'display', 'browser' );
 		$resultObj->addValue( null, 'theme_color', $config->get( 'MFManifestThemeColor' ) );
 		$resultObj->addValue( null, 'background_color', $config->get( 'MFManifestBackgroundColor' ) );
-		$resultObj->addValue( null, 'start_url', Title::newMainPage()->getLocalUrl() );
+		$resultObj->addValue( null, 'start_url', Title::newMainPage()->getLocalURL() );
 
 		$icons = [];
 
 		$appleTouchIcon = $config->get( 'AppleTouchIcon' );
 		if ( $appleTouchIcon !== false ) {
 			$appleTouchIconUrl = wfExpandUrl( $appleTouchIcon, PROTO_CURRENT );
-			$request = MWHttpRequest::factory( $appleTouchIconUrl );
+			$request = $services->getHttpRequestFactory()->create( $appleTouchIconUrl, [], __METHOD__ );
 			$request->execute();
 			$appleTouchIconContent = $request->getContent();
 			if ( !empty( $appleTouchIconContent ) ) {
@@ -35,7 +39,7 @@ class ApiWebappManifest extends ApiBase {
 				'src' => $appleTouchIcon
 			];
 			if ( isset( $appleTouchIconSize ) && $appleTouchIconSize !== false ) {
-				$icon['sizes'] = $appleTouchIconSize[0].'x'.$appleTouchIconSize[1];
+				$icon['sizes'] = $appleTouchIconSize[0] . 'x' . $appleTouchIconSize[1];
 				$icon['type'] = $appleTouchIconSize['mime'];
 			}
 			$icons[] = $icon;

@@ -3,21 +3,15 @@
 		"authors": [
 			"Borichèt",
 			"Dragonòt",
+			"Fitoschido",
 			"පසිඳු කාවින්ද"
 		]
 	},
 	"mobile-frontend-cookies-required": "A-i é damanca dij bëscotin për passé da na manera ëd visualisassion a n'àutra. Për piasì, ch'a j'abìlita e ch'a prevua torna.",
-	"mobile-frontend-editor-cta": "Ch'a giuta a amelioré costa pàgina!",
-	"mobile-frontend-editor-disabled": "Costa pàgina a l'é proteta për evité dij vandalism.",
 	"mobile-frontend-editor-edit": "Modifiché",
-	"mobile-frontend-editor-tutorial-cancel": "Nò, mersì",
-	"mobile-frontend-editor-tutorial-confirm": "Ancaminé a modifiché",
-	"mobile-frontend-editor-tutorial-summary": "Ch'a l'abia nen peur dë scrive. Ch'a serca d'amelioré la pàgina $1.",
-	"mobile-frontend-editor-unavailable": "La modìfica con un sacociàbil al moment a l'é nen disponìbil su sò navigador. Për piasì, ch'a preuva un navigador diferent.",
-	"mobile-frontend-editor-undo-unsupported": "Al moment l'anulament a l'é nen mantnù an sij terminaj sacociàbij.",
 	"mobile-frontend-history": "Smon-e la stòria dle modìfiche ëd costa pàgina.",
 	"mobile-frontend-home-button": "Pàgina Prinsipal",
-	"mobile-frontend-language-article-heading": "Les an n'àutra lenga",
+	"mobile-frontend-language-article-heading": "Lenga",
 	"mobile-frontend-logged-in-homepage-notification": "Bin ëvnù, $1!",
 	"mobile-frontend-main-menu-button-tooltip": "Duverté lë mnù prinsipal",
 	"mobile-frontend-main-menu-login": "Intra",

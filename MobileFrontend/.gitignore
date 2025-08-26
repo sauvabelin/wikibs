@@ -3,9 +3,15 @@
 *.kate-swp
 .*.swp
 .idea/
+/.storybook/mediawiki-skins-MinervaNeue/
+/.storybook/resolve-less-imports/
 node_modules/
 tmp/
-/docs
+/docs/js/
+/docs/lcov-report/
+/docs/lcov.info
+/docs/php/
+/docs/ui/
 dev-scripts/remotes
 /vendor
 /composer.lock
@@ -13,3 +19,7 @@ dev-scripts/remotes
 .DS_Store
 tests/report
 .bundle/
+resources/dist/
+/.nyc_output/
+/tests/selenium/log
+/.eslintcache

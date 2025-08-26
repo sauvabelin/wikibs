@@ -1,10 +1,12 @@
-@import 'minerva.variables';
+@import '../../../minerva.less/minerva.variables.less';
+@import '../../../minerva.less/minerva.mixins.less';
 
 @media print {
 	.noprint,
 	.banner-container,
 	.header,
-	.pre-content,
+	.minerva__tab-container,
+	.page-actions-menu,
 	.post-content {
 		display: none;
 	}
@@ -27,6 +29,11 @@
 
 	img {
 		max-width: 100%;
+
+		// Disable lazy loading transition animation for print media (T220668) so they display.
+		&.image-lazy-loaded {
+			.animation( none ) !important;
+		}
 	}
 }
 
@@ -43,7 +50,6 @@
 
 	@import 'header.less';
 	@import 'article.less';
-	@import 'blockquotes.less';
 	@import 'references.less';
 	@import 'footer.less';
 }

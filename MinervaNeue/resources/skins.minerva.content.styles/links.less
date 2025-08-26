@@ -1,6 +1,6 @@
 @import 'mediawiki.mixins.less';
-@import 'minerva.variables.less';
-@import 'minerva.mixins.less';
+@import '../../minerva.less/minerva.variables.less';
+@import '../../minerva.less/minerva.mixins.less';
 
 /**
  * Note that certain links may not have an href selector.
@@ -8,17 +8,20 @@
  * links can be differentiated from other links. Thus we only apply the linkColor to links with href
  * attributes.
 */
-/* stylelint-disable no-descending-specificity */
-a:not( [href] ) {
+a:not( [ href ] ) {
 	color: @colorGray2;
+
+	/* The anchor is functionally a link so show a hand cursor. */
+	cursor: pointer;
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 a {
+	color: @color-link;
 	text-decoration: none;
-	color: @linkColor;
 
 	&:visited {
-		color: #5a3696;
+		color: #6b4ba1;
 	}
 
 	&:active {
@@ -32,16 +35,17 @@ a {
 	&.new,
 	&.new:visited,
 	&.new:hover {
-		color: @redLinkColor;
+		color: @color-link--new;
 		// Take care of headings in page lists.
 		> * {
-			color: @redLinkColor;
+			color: @color-link--new;
 		}
 	}
 
 	&.external {
-		/* @embed */
-		.background-image-svg( 'images/external-link-ltr-icon.svg', 'images/external-link-ltr-icon.png' );
+		// background-image is specified by ResourceLoader.
+		// Force the image size to be 10px.
+		background-size: 10px;
 		background-repeat: no-repeat;
 		background-position: center right;
 		padding-right: 13px;
@@ -51,7 +55,7 @@ a {
 // Generic class name needed
 .return-link {
 	display: block;
-	font-size: 0.9em;
+	font-size: @font-size-minerva-small;
 	margin-top: 1.5em;
 }
 
@@ -60,16 +64,4 @@ a {
 .plainlinks a {
 	background: none !important;
 	padding: 0 !important;
-}
-
-// Numbered external links, copied from content.parsoid.less
-// TODO: Separate theme-agnostic rules from that module
-// so we can load it here.
-.mw-parser-output {
-	counter-reset: mw-numbered-ext-link;
-
-	a[rel~='mw:ExtLink']:empty:after {
-		content: '[' counter( mw-numbered-ext-link ) ']';
-		counter-increment: mw-numbered-ext-link;
-	}
 }

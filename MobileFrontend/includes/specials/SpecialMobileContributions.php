@@ -1,6 +1,9 @@
 <?php
 
-use Wikimedia\Rdbms\ResultWrapper;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Storage\RevisionRecord;
+use Wikimedia\IPUtils;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * A special page to show the contributions of a user
@@ -8,19 +11,19 @@ use Wikimedia\Rdbms\ResultWrapper;
  */
 class SpecialMobileContributions extends SpecialMobileHistory {
 	/**
-	 * @var string $specialPageName The Name of the special page
+	 * @var string The Name of the special page
 	 *		(Note we do not redirect to Special:History/$par to
 	 *		allow the parameter to be used for usernames)
 	 */
 	protected $specialPageName = 'Contributions';
-	/**  @var User $user Saves the userobject*/
+	/** @var User */
 	protected $user;
 	/**
-	 * @var MWTimestamp $lastDate A timestamp used for
+	 * @var MWTimestamp A timestamp used for
 	 *		MobileSpecialPageFeed::renderListHeaderWhereNeeded
 	 */
 	protected $lastDate;
-	/**  @var bool $showUsername Whether to show the username in results or not */
+	/** @var bool Whether to show the username in results or not */
 	protected $showUsername = false;
 	/** @var array Lengths of previous revisions */
 	protected $prevLengths = [];
@@ -37,47 +40,58 @@ class SpecialMobileContributions extends SpecialMobileHistory {
 	protected function getHeaderBarLink( $title ) {
 		// Convert user page URL to User object.
 		$user = User::newFromName( $title->getText(), false );
-		$glyph = $user->isAnon() ? 'anonymous' : 'user';
+		$icon = $user->isAnon() ? 'userAnonymous' : 'userAvatar';
 
-		return Html::element( 'a',
+		return Html::rawElement( 'a',
 			[
-				'class' => MobileUI::iconClass( $glyph, 'before', 'mw-mf-user' ),
-				'href' => $title->getLocalUrl(),
+				'class' => MobileUI::iconClass( $icon, 'before', 'mw-mf-user' ),
+				'href' => $title->getLocalURL(),
 			],
-			$title->getText() );
+			Html::element( 'span', [], $title->getText() )
+		);
 	}
 
 	/**
 	 * Render the special page body
-	 * @param string $par The username
+	 * @param string|null $par The username
 	 */
 	public function executeWhenAvailable( $par = '' ) {
-		$this->offset = $this->getRequest()->getVal( 'offset', false );
+		$this->offset = $this->getRequest()->getVal( 'offset', '' );
 		if ( $par ) {
 			// enter article history view
 			$this->user = User::newFromName( $par, false );
-			if ( $this->user && ( $this->user->idForName() || User::isIP( $par ) ) ) {
+
+			$usernameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
+			$userIsIP = ( $usernameUtils->isIP( $par ) || IPUtils::isIPv6( $par ) );
+			if ( $this->user && ( $this->user->idForName() || $userIsIP ) ) {
 				// set page title as on desktop site - bug 66656
 				$username = $this->user->getName();
 				$out = $this->getOutput();
 				$out->addModuleStyles( [
 					'mobile.pagelist.styles',
-					'mobile.special.user.icons',
+					"mobile.placeholder.images",
 					'mobile.pagesummary.styles',
+					'mobile.user.icons'
 				] );
 				$out->setHTMLTitle( $this->msg(
 					'pagetitle',
 					$this->msg( 'contributions-title', $username )->plain()
 				)->inContentLanguage() );
 
-				if ( User::isIP( $par ) ) {
+				if ( $userIsIP ) {
 					$this->renderHeaderBar( Title::newFromText( 'User:' . $par ) );
 				} else {
 					$this->renderHeaderBar( $this->user->getUserPage() );
 				}
-				$res = $this->doQuery();
+				$pager = new ContribsPager( $this->getContext(), ContribsPager::processDateFilter( [
+					'target' => $this->user->getName(),
+					// All option setting is baked into SpecialContribution::execute
+					// Until that method gets refactored we will ignore all options
+					// See https://phabricator.wikimedia.org/T199429
+				] ) );
+				$res = $pager->reallyDoQuery( $this->offset, self::LIMIT, false );
 				$out->addHTML( Html::openElement( 'div', [ 'class' => 'content-unstyled' ] ) );
-				$this->showContributions( $res );
+				$this->showContributions( $res, $pager );
 				$out->addHTML( Html::closeElement( 'div' ) );
 				return;
 			}
@@ -87,47 +101,52 @@ class SpecialMobileContributions extends SpecialMobileHistory {
 
 	/**
 	 * Render the contributions of user to page
-	 * @param ResultWrapper $res Result of doQuery
+	 * @param IResultWrapper $res Result of doQuery
+	 * @param ContribsPager $pager
 	 */
-	protected function showContributions( ResultWrapper $res ) {
+	protected function showContributions( IResultWrapper $res, ContribsPager $pager ) {
 		$numRows = $res->numRows();
-		$rev = null;
 		$out = $this->getOutput();
-		$revs = [];
-		$prevRevs = [];
+
+		$revisionRecord = null;
+		$revisionRecords = [];
+		$previousRecords = [];
 		foreach ( $res as $row ) {
-			$rev = new Revision( $row );
-			$revs[] = $rev;
-			if ( $res->key() <= self::LIMIT + 1 && $rev->getParentId() ) {
-				$prevRevs[] = $rev->getParentId();
+			$revisionRecord = $pager->tryCreatingRevisionRecord( $row );
+			if ( $revisionRecord ) {
+				$revisionRecords[] = $revisionRecord;
+				if ( $res->key() <= self::LIMIT + 1 && $revisionRecord->getParentId() ) {
+					$previousRecords[] = $revisionRecord->getParentId();
+				}
 			}
 		}
-		$this->prevLengths = Revision::getParentLengths( wfGetDB( DB_REPLICA ), $prevRevs );
+		$this->prevLengths = MediaWikiServices::getInstance()
+			->getRevisionStore()
+			->getRevisionSizes( $previousRecords );
 		if ( $numRows > 0 ) {
 			$count = 0;
-			foreach ( $revs as $rev ) {
+			foreach ( $revisionRecords as $revRecord ) {
 				if ( $count++ < self::LIMIT ) {
-					$this->showContributionsRow( $rev );
+					$this->showContributionsRow( $revRecord );
 				}
 			}
 			$out->addHTML( '</ul>' );
-			// Captured 1 more than we should have done so if the number of
-			// results is greater than the limit there are more to show.
-			if ( $numRows > self::LIMIT ) {
-				$out->addHTML( $this->getMoreButton( $rev->getTimestamp() ) );
+			$queries = $pager->getPagingQueries();
+			if ( is_array( $queries['next'] ) && array_key_exists( 'offset', $queries['next'] ) ) {
+				$out->addHTML( $this->getMoreButton( $queries['next']['offset'] ) );
 			}
 		} else {
 			// For users who exist but have not made any edits
 			$out->addHTML(
-				Html::warningBox( $this->msg( 'mobile-frontend-history-no-results' ) ) );
+				Html::warningBox( $this->msg( 'mobile-frontend-history-no-results' )->parse() ) );
 		}
 	}
 
 	/**
 	 * Render the contribution of the pagerevision (time, bytes added/deleted, pagename comment)
-	 * @param Revision $rev Revision to show contribution for
+	 * @param RevisionRecord $rev Revision to show contribution for
 	 */
-	protected function showContributionsRow( Revision $rev ) {
+	private function showContributionsRow( RevisionRecord $rev ) {
 		$unhide = (bool)$this->getRequest()->getVal( 'unhide' );
 		$user = $this->getUser();
 		$username = $this->getUsernameText( $rev, $user, $unhide );
@@ -137,15 +156,24 @@ class SpecialMobileContributions extends SpecialMobileHistory {
 		$this->renderListHeaderWhereNeeded( $this->getLanguage()->userDate( $ts, $this->getUser() ) );
 		$ts = new MWTimestamp( $ts );
 
-		if ( $rev->userCan( Revision::DELETED_TEXT, $user ) ) {
-			$diffLink = SpecialPage::getTitleFor( 'MobileDiff', $rev->getId() )->getLocalUrl();
+		$visibility = $rev->getVisibility();
+		if ( RevisionRecord::userCanBitfield(
+			$visibility,
+			RevisionRecord::DELETED_TEXT,
+			$user
+		) ) {
+			$diffLink = SpecialPage::getTitleFor( 'MobileDiff', $rev->getId() )->getLocalURL();
 		} else {
 			$diffLink = false;
 		}
 
 		// FIXME: Style differently user comment when this is the case
-		if ( !$rev->userCan( Revision::DELETED_USER, $user ) ) {
-			$username = $this->msg( 'rev-deleted-user' )->plain();
+		if ( !RevisionRecord::userCanBitfield(
+			$visibility,
+			RevisionRecord::DELETED_USER,
+			$user
+		) ) {
+			$username = $this->msg( 'rev-deleted-user' )->text();
 		}
 
 		$bytes = null;
@@ -153,47 +181,15 @@ class SpecialMobileContributions extends SpecialMobileHistory {
 			$bytes = $rev->getSize() - $this->prevLengths[$rev->getParentId()];
 		}
 		$isMinor = $rev->isMinor();
+		$title = Title::newFromLinkTarget( $rev->getPageAsLinkTarget() );
 		$this->renderFeedItemHtml( $ts, $diffLink, $username, $comment,
-			$rev->getTitle(), $user->isAnon(), $bytes, $isMinor
+			$title, $user->isAnon(), $bytes, $isMinor
 		);
 	}
 
 	/**
-	 * Returns a list of query conditions that should be run against the revision table
-	 * @return array
-	 */
-	protected function getQueryConditions() {
-		$conds = [];
-		$dbr = wfGetDB( DB_REPLICA, self::DB_REVISIONS_TABLE );
-
-		if ( $this->user ) {
-			// Code in SpecialMobileHistory handles the tables and joins
-			$conds[] = ActorMigration::newMigration()->getWhere( $dbr, 'rev_user', $this->user )['conds'];
-		}
-
-		$currentUser = $this->getContext()->getUser();
-
-		// T132653: Only list deleted/suppressed edits if the current user - not the
-		// target user (`$this->user`) – can view them.
-		// This code was taken from ContribsPager#getQueryInfo.
-		// FIXME: Make Special:MobileContributions use ContribsPager ASAP.
-		if ( $currentUser && $this->user ) {
-			if ( !$currentUser->isAllowed( 'deletedhistory' ) ) {
-				$conds[] = $dbr->bitAnd( 'rev_deleted', Revision::DELETED_USER ) . ' = 0';
-			} elseif ( !$currentUser->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
-				$conds[] = $dbr->bitAnd( 'rev_deleted', Revision::SUPPRESSED_USER ) .
-					' != ' . Revision::SUPPRESSED_USER;
-			}
-		}
-		if ( $this->offset ) {
-			$conds[] = 'rev_timestamp <= ' . $dbr->addQuotes( $this->offset );
-		}
-		return $conds;
-	}
-
-	/**
 	 * Get the URL to go to desktop site of this page
-	 * @param string $subPage URL of mobile diff page
+	 * @param string|null $subPage URL of mobile diff page
 	 * @return null
 	 */
 	public function getDesktopUrl( $subPage ) {

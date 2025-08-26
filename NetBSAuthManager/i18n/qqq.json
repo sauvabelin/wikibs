@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"NetBS Development Team"
+		]
+	},
+	"netbsauthmanager-desc": "{{desc|name=NetBSAuthManager|url=https://github.com/sauvabelin/netbs-wiki-auth}}",
+	"netbsauth-provider-name": "Name of the NetBS authentication provider displayed in MediaWiki",
+	"netbsauth-login-not-exists": "Error message when user tries to login with a username that doesn't exist in the NetBS database",
+	"netbsauth-login-wrong-password": "Error message when user enters an incorrect password during login"
+}

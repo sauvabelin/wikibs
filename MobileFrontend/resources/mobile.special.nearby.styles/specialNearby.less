@@ -1,5 +1,5 @@
-@import 'mobile.variables';
-@hugeIconSize: 9.625em;
+@import '../../mobile.less/mobile.variables.less';
+@nearbyImageSize: 9.625em;
 
 .nearby-accept-pending .heading-holder {
 	// hide the page header when on landing page
@@ -25,24 +25,19 @@
 	}
 }
 
+/* stylelint-disable selector-max-id */
+#mw-mf-nearby {
+	position: relative;
+}
+
 #mf-nearby-info-holder {
 	padding: 50px 20px 0;
 	text-align: center;
 
-	.icon {
-		margin: 0 auto 20px;
-		min-width: @hugeIconSize;
-		min-height: @hugeIconSize;
-
-		&:before {
-			min-height: @hugeIconSize;
-		}
-	}
-
 	// be specific in order to override default padding
 	h3 {
 		font-size: 1em;
-		font-family: @fontFamily;
+		font-family: @fontFamilyBase;
 		padding: 0 0 10px;
 	}
 
@@ -50,4 +45,13 @@
 		color: @colorGray7;
 		margin-bottom: 20px;
 	}
+}
+/* stylelint-enable selector-max-id */
+
+.mf-nearby-image-info {
+	margin: 0 auto 20px;
+	min-width: @nearbyImageSize;
+	min-height: @nearbyImageSize;
+	background-repeat: no-repeat;
+	background-position: center;
 }

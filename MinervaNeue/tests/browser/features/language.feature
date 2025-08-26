@@ -1,4 +1,4 @@
-@chrome @en.m.wikipedia.beta.wmflabs.org @firefox @test2.m.wikipedia.org
+@chrome @test2.m.wikipedia.org
 Feature: Language selection
 
   Background:
@@ -56,7 +56,7 @@ Feature: Language selection
     Then I should not see a suggested language link
     Then I should see a non-suggested language link
 
-  @smoke @en.m.wikipedia.beta.wmflabs.org @integration
+  @smoke @en.m.wikipedia.beta.wmflabs.org
   Scenario: Checking that the suggested language link has been created
     Given I go to a page that has languages
     And I click the switch-language page action

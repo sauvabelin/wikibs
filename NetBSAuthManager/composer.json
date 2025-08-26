@@ -1,0 +1,12 @@
+{
+    "require": {
+        "symfony/security": "^4.0",
+        "psr/log": "^1.1",
+        "psr/container": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "NetBS\\": "includes/"
+        }
+    }
+}

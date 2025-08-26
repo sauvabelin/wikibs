@@ -1,15 +1,14 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Provides a list of languages available for a page
  */
 class SpecialMobileLanguages extends MobileSpecialPage {
-	/** @var Title $title Saves the title object to get languages for */
+	/** @var Title Saves the title object to get languages for */
 	private $title;
 
-	/**
-	 * Construct function
-	 */
 	public function __construct() {
 		parent::__construct( 'MobileLanguages' );
 	}
@@ -53,7 +52,8 @@ class SpecialMobileLanguages extends MobileSpecialPage {
 
 		if ( isset( $page['langlinks'] ) ) {
 			// Set the name of each language based on the system list of language names
-			$languageMap = Language::fetchLanguageNames();
+			$languageMap = MediaWikiServices::getInstance()->getLanguageNameUtils()
+				->getLanguageNames();
 			$languages = $page['langlinks'];
 			foreach ( $page['langlinks'] as $index => $langObject ) {
 				if ( !$this->isLanguageObjectValid( $languageMap, $langObject ) ) {
@@ -61,7 +61,7 @@ class SpecialMobileLanguages extends MobileSpecialPage {
 					continue;
 				}
 				$langObject['langname'] = $languageMap[$langObject['lang']];
-				$langObject['url'] = MobileContext::singleton()->getMobileUrl( $langObject['url'] );
+				$langObject['url'] = $this->mobileContext->getMobileUrl( $langObject['url'] );
 				$languages[$index] = $langObject;
 			}
 			$compareLanguage = function ( $a, $b ) {
@@ -95,7 +95,7 @@ class SpecialMobileLanguages extends MobileSpecialPage {
 			\MediaWiki\Logger\LoggerFactory::getInstance( MobileContext::LOGGER_CHANNEL )->warning(
 				'`url` key is undefined in language object',
 				[
-					'uri' => RequestContext::getMain()->getRequest()->getFullRequestURL(),
+					'uri' => $this->getRequest()->getFullRequestURL(),
 					'langObject' => $langObject,
 				]
 			);
@@ -103,6 +103,7 @@ class SpecialMobileLanguages extends MobileSpecialPage {
 		}
 		return true;
 	}
+
 	/**
 	 * Returns an array of language variants that the page is available in
 	 * @return array
@@ -146,7 +147,7 @@ class SpecialMobileLanguages extends MobileSpecialPage {
 				'href' => $langObject['url'],
 				'hreflang' => $langObject['lang'],
 				'lang' => $langObject['lang'],
-				'title' => isset( $langObject['*'] ) ? $langObject['*'] : $langObject['langname']
+				'title' => $langObject['*'] ?? $langObject['langname']
 			], $langObject['langname'] ) .
 			Html::closeElement( 'li' );
 
@@ -155,7 +156,7 @@ class SpecialMobileLanguages extends MobileSpecialPage {
 
 	/**
 	 * Render the page with a list of languages the page is available in
-	 * @param string $pagename The name of the page
+	 * @param string|null $pagename The name of the page
 	 * @throws ErrorPageError
 	 */
 	public function executeWhenAvailable( $pagename ) {
@@ -186,7 +187,7 @@ class SpecialMobileLanguages extends MobileSpecialPage {
 			);
 			$html .= Html::openElement( 'p' );
 			$html .= Html::element( 'a',
-				[ 'href' => $this->title->getLocalUrl() ],
+				[ 'href' => $this->title->getLocalURL() ],
 				$this->msg( 'returnto', $titlename )->text()
 			);
 			$html .= Html::closeElement( 'p' );
@@ -228,7 +229,6 @@ class SpecialMobileLanguages extends MobileSpecialPage {
 				$this->msg( 'mobile-frontend-languages-nonexistent-title' )->params( $pagename )->text() );
 		}
 
-		$html = MobileUI::contentElement( $html );
 		$output->setPageTitle( $pageTitle );
 		$output->addHTML( $html );
 	}

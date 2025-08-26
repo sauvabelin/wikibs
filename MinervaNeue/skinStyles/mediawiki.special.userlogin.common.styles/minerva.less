@@ -1,51 +1,22 @@
-@import 'minerva.variables';
-@import 'minerva.mixins';
+/* stylelint-disable selector-max-id */
 
-// hide the texts inside these selectors because they push the login form below the fold
+@import '../../minerva.less/minerva.variables.less';
+@import '../../minerva.less/minerva.mixins.less';
+
+// Hide the texts inside these selectors because they push the login form below the fold
+// `#user-button` serves no purpose on the login screen as you are not logged in so cannot use.
 #userloginprompt,
 #languagelinks,
-// This serves no purpose on the login screen as you are not logged in so cannot use.
 #user-button {
 	display: none;
 }
 
+// `.messagebox` not needed here, as it's not used currently.
 .errorbox,
 .successbox,
 .warningbox {
 	padding: 0.5em 1em;
 	margin: 1em 0;
-}
-
-// FIXME: Move to ConfirmEdit extension
-/* fancycaptcha reload button */
-.confirmedit-captcha-reload,
-#mf-captcha-reload-container {
-	border-top: 1px dashed #e1e1e1;
-	display: inline-block;
-	padding: 14px 25%;
-
-	// FIXME: Make use of icon classes
-	.fancycaptcha-reload,
-	&.fancycaptcha-reload {
-		color: @colorGray7;
-		font-weight: bold;
-		background: none;
-
-		/* stylelint-disable no-descending-specificity */
-		&:before {
-			// Note icon is provided in mobile.ajax
-			content: '';
-			background-position: center left;
-			background-repeat: no-repeat;
-			.background-size( 16px, 16px );
-			width: 1em;
-			height: 1em;
-			display: inline-block;
-			padding-right: 8px;
-			line-height: 1;
-		}
-		/* stylelint-enable no-descending-specificity */
-	}
 }
 
 .mw-ui-container {
@@ -70,55 +41,6 @@
 	.mw-createacct-benefits-container {
 		display: none;
 	}
-
-	// CAPTCHA style improvements
-	.captcha {
-		margin: 0.8em 0 0;
-		border: solid 1px @colorGray12;
-		border-radius: @borderRadius;
-		overflow: hidden;
-		background: #fff;
-		text-align: center;
-
-		input:not( [type='submit'] ) {
-			-webkit-appearance: none;
-			border-radius: 0;
-			padding: 0.8em 0.5em;
-			margin: 0;
-		}
-
-		input:not( [type='submit'] ),
-		img,
-		#wpCaptchaWord {
-			border: 0;
-			border-top: solid 1px @colorGray12;
-
-			&:first-child {
-				border-top: 0;
-			}
-		}
-
-		// CAPTCHA's are well known by internet users, save the space of the explanation
-		> p,
-		label {
-			display: none;
-		}
-
-		// FancyCaptcha things
-		.fancycaptcha-image-container img {
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-		}
-
-		.mw-createacct-captcha-assisted {
-			font-size: 0.8em;
-		}
-
-		.confirmedit-captcha-reload {
-			position: relative;
-		}
-	}
 }
 
 #mw-mf-login,
@@ -129,9 +51,37 @@
 		// FIXME: Should we set the height here?
 		height: 72px;
 		margin-bottom: @headingMargin;
+
 		img {
 			// Important to override default max-width and height auto combo
 			height: 72px !important;
+		}
+	}
+}
+
+// Hide keep me logged in checkbox on mobile. It will be marked as checked by default.
+#userloginForm {
+	.mw-userlogin-rememberme {
+		display: none;
+	}
+}
+
+.client-nojs {
+	// Show keep me logged in checkbox for grade C users on mobile so that they can
+	// check the checkbox (we use JS to check this and that won't run on grade C bmode)
+	#userloginForm {
+		.mw-userlogin-rememberme {
+			display: block;
+			margin: 10px 0 11px;
+		}
+	}
+}
+
+@media all and ( min-width: @width-breakpoint-tablet ) {
+	// If tablet mode, show the keep me logged in checkbox
+	#userloginForm {
+		.mw-userlogin-rememberme {
+			display: block;
 		}
 	}
 }
@@ -141,16 +91,13 @@
 	@margin: 12px;
 
 	#userloginForm {
-		// tips are not useful
-		.prefsectiontip, .htmlform-tip,
-		// hide help link
-		#mw-userlogin-help, .mw-userlogin-help,
-		// benefits are obvious through the workflows
-		#wpReason,
+		// tips are not useful, hide help link, benefits (#wpReason)
+		// are obvious through the workflows,
 		// real name in account creation is not so important on mobile
-		#wpRealName,
-		// Hide keep me logged in checkbox on mobile.
-		.mw-ui-checkbox {
+		.prefsectiontip, .htmlform-tip,
+		#mw-userlogin-help, .mw-userlogin-help,
+		#wpReason,
+		#wpRealName {
 			display: none !important;
 		}
 	}

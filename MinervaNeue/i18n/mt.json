@@ -3,15 +3,13 @@
 		"authors": [
 			"Chrisportelli",
 			"Leli Forte",
-			"MTSap"
+			"MTSap",
+			"ToniSant"
 		]
 	},
-	"mobile-frontend-editor-cta": "Trid tkun dħalt fil-kont tiegħek qabel ma tkun tista' timmodifika paġni fuq il-mowbajl.",
-	"mobile-frontend-editor-disabled": "M'intix permess li timmodifika din il-paġna.",
 	"mobile-frontend-editor-edit": "Immodifika",
-	"mobile-frontend-editor-tutorial-summary": "Ipprova tejjeb il-paġna $1. Tibżax mill-markup.",
 	"mobile-frontend-home-button": "Daħla",
-	"mobile-frontend-language-article-heading": "Aqra b'lingwa oħra",
+	"mobile-frontend-language-article-heading": "Lingwa",
 	"mobile-frontend-logged-in-homepage-notification": "Merħba, $1!",
 	"mobile-frontend-main-menu-button-tooltip": "Iftaħ il-menu prinċipali",
 	"mobile-frontend-main-menu-login": "Idħol",
@@ -23,5 +21,6 @@
 	"mobile-frontend-meta-data-issues-header": "Anomaliji",
 	"mobile-frontend-pageaction-edit-tooltip": "Immodifika s-sezzjoni tad-dħul ta' din il-paġna.",
 	"mobile-frontend-placeholder": "Fittex fil-{{SITENAME}}",
-	"mobile-frontend-random-button": "Paġna kwalunkwe"
+	"mobile-frontend-random-button": "Paġna kwalunkwe",
+	"minerva-page-actions-language-switcher": "Lingwa"
 }

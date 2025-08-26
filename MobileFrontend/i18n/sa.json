@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ansumang",
-			"Shubha",
-			"NehalDaveND"
+			"NehalDaveND",
+			"Shubha"
 		]
 	},
 	"mobile-frontend-categories-add": "वर्गः योज्यताम्",
@@ -14,9 +14,6 @@
 	"mobile-frontend-copyright": "भिन्नोल्लेखः यावत् न भवेत्, तावत् $1 इत्यत्र उल्लेखो भवति ।",
 	"mobile-frontend-desc": "जङ्गमदूरवाणी-मुखान्त्यम्",
 	"mobile-frontend-diffview-title": "परिवर्तनानि",
-	"mobile-frontend-donate-image-nouploads": "उपारोपणं नास्ति",
-	"mobile-frontend-donate-image-title": "उपारोहणानि",
-	"mobile-frontend-editor-abusefilter-read-more": "अधिकं पठ्यताम्",
 	"mobile-frontend-editor-cancel": "निरस्यताम्",
 	"mobile-frontend-editor-continue": "अग्रिमम्",
 	"mobile-frontend-editor-editing": "सम्पादयति",
@@ -42,11 +39,9 @@
 	"mobile-frontend-news-items": "वार्तायाम्",
 	"mobile-frontend-opt-in-explain": "उपान्त्य(बीटा)प्रवेशेन भवता प्रयोगात्मकविशेषताः द्रष्टुं शक्याः भवन्ति । किन्तु दोषाणां समस्यानां सम्भवाः अपि विद्यन्ते एव ।",
 	"mobile-frontend-overlay-close": "पिदधातु",
-	"mobile-frontend-overlay-continue": "निरन्तरम्",
 	"mobile-frontend-privacy-link-text": "गोपनीयता",
 	"mobile-frontend-save-settings": "नियोजनं रक्ष्यताम्",
 	"mobile-frontend-settings-beta": "उपान्त्यम्",
-	"mobile-frontend-talk-overlay-header": "सम्भाषणम्",
 	"mobile-frontend-terms-text": "प्रयोगस्य नियमाः",
 	"mobile-frontend-view": "जङ्गमदूरवाणी-दृश्यम्",
 	"mobile-frontend-view-desktop": "उत्पीठम्",
@@ -60,6 +55,5 @@
 	"mobile-frontend-watchlist-more": "अधिकम्",
 	"tag-mobile_edit": "जङ्गमदूरवाण्या सम्पादितम्",
 	"tag-mobile_web_edit": "जङ्गमदूरवाण्या जालसम्पादनम्",
-	"mobile-frontend-loading-message": "आरोपयति...",
-	"mobile-frontend-panel-ok": "अस्तु"
+	"mobile-frontend-loading-message": "आरोपयति..."
 }

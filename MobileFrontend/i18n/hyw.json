@@ -1,9 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"ArmenBakkalian"
+			"ArmenBakkalian",
+			"Azniv Stepanian",
+			"Kareyac",
+			"Շահէն"
 		]
 	},
-	"tag-mobile_edit": "Բջջային հեռախօսով Խմբագրուած",
-	"tag-mobile_web_edit": "Խմբագրում կայքի բջջային տարբերակէն"
+	"mobile-frontend-categories-search": "Ստորոգութիւնների որինում",
+	"mobile-frontend-editor-cancel": "Չեղարկել",
+	"mobile-frontend-main-menu-settings-heading": "Կարգաւորումներ",
+	"mobile-frontend-watchlist-a-z": "Ցանկ",
+	"mobile-frontend-watchlist-more": "աւելի",
+	"tag-mobile_edit": "Առձեռն խմբագրում",
+	"tag-mobile_web_edit": "Խմբագրում կայքի առձեռն տարբերակէն"
 }

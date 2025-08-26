@@ -1,8 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Irus"
+			"Irus",
+			"Nkankane",
+			"3atbulletz",
+			"INgobemnyama"
 		]
 	},
-	"mobile-frontend-view": "Mobile buka"
+	"mobile-frontend-terms-text": "imigomo yokusebenzisa",
+	"mobile-frontend-view": "Buka ikhasi ngomakhalipha",
+	"mobile-frontend-view-desktop": "Inqwakama",
+	"tag-mobile_edit": "Ukuhlela okwenziwa kumakhalekhukhwini",
+	"tag-mobile_web_edit": "Ukuhlela okwenziwe ngomakhalekhukhwini"
 }
