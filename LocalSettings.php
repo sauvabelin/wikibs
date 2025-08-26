@@ -128,9 +128,12 @@ $wgGroupPermissions['*']['edit']          = false;
 $wgGroupPermissions['*']['createaccount'] = false;
 $wgGroupPermissions['*']['autocreateaccount'] = true;
 
+$wgGroupPermissions['user']['editmyprivateinfo'] = false;
+
 $wgShowExceptionDetails = true;
 $wgShowDBErrorBacktrace = true;
 
+/*
 wfLoadSkin( 'Vector' );
 wfLoadSkin( 'MinervaNeue' );
 
@@ -138,10 +141,13 @@ wfLoadSkin( 'MinervaNeue' );
 wfLoadExtension( 'MobileFrontend' );
 $wgMFAutodetectMobileView = true;
 $wgMFDefaultSkinClass = 'SkinMinerva';
+*/
 
-require_once './extensions/NetBSAuth/NetBSAuth.php';
+wfLoadSkin( 'Vector' );
 
-$wgAuth    = new NetBSAuth([
+wfLoadExtension( 'NetBSAuthManager' );
+
+$wgNetBSAuthConfig = [
     'host'              => $wgDBserver,
     'database'          => genv("USER_DB_NAME", "netbs"),
     'username'          => $wgDBuser,
@@ -152,8 +158,23 @@ $wgAuth    = new NetBSAuth([
     'saltColumn'        => genv("DB_SALT_COL", "salt"),
     'adminColumn'		=> genv("DB_ADMIN_COL", "wiki_admin"),
     'bcrypt_cost'       => intval(genv("BCRYPT_COST", "5000"))
-]);
+];
 
+// Configure AuthManager to use our NetBS provider
+$wgAuthManagerConfig = [
+    'primaryauth' => [
+        NetBSPrimaryAuthenticationProvider::class => [
+            'class' => NetBSPrimaryAuthenticationProvider::class,
+            'args' => [ $wgNetBSAuthConfig ],
+            'sort' => 100,
+        ],
+    ],
+    'secondaryauth' => [],
+    'preauth' => [],
+];
+
+
+$wgDebugLogGroups['authentication'] = '/var/log/mediawiki/auth.log';
 
 
 

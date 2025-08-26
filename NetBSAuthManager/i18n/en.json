@@ -1,0 +1,6 @@
+{
+	"netbsauthmanager-desc": "NetBS Authentication Manager for MediaWiki using AuthManager framework",
+	"netbsauth-provider-name": "NetBS Authentication",
+	"netbsauth-login-not-exists": "User does not exist in NetBS database",
+	"netbsauth-login-wrong-password": "Incorrect password"
+}

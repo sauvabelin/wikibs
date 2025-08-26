@@ -1,0 +1,41 @@
+{
+	"name": "NetBSAuthManager",
+	"version": "2.0.0",
+	"author": [
+		"NetBS Development Team"
+	],
+	"url": "https://github.com/sauvabelin/netbs-wiki-auth",
+	"descriptionmsg": "netbsauthmanager-desc",
+	"license-name": "MIT",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.31.0"
+	},
+	"MessagesDirs": {
+		"NetBSAuthManager": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"NetBS": "includes/NetBS.php",
+		"NetBSPrimaryAuthenticationProvider": "includes/NetBSPrimaryAuthenticationProvider.php"
+	},
+	"config": {
+		"NetBSAuthConfig": {
+			"description": "Configuration for NetBS authentication provider",
+			"value": {
+				"host": "localhost",
+				"database": "netbs",
+				"username": "",
+				"password": "",
+				"table": "users",
+				"usernameColumn": "username",
+				"hashColumn": "password_hash",
+				"saltColumn": "salt",
+				"adminColumn": "wiki_admin",
+				"bcrypt_cost": 10
+			}
+		}
+	},
+	"manifest_version": 2
+}
