@@ -142,6 +142,7 @@ wfLoadExtension( 'MobileFrontend' );
 $wgMFAutodetectMobileView = true;
 $wgMFDefaultSkinClass = 'SkinMinerva';
 
+wfLoadExtension( 'VisualEditor' );
 
 wfLoadSkin( 'Vector' );
 
