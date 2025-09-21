@@ -25,8 +25,6 @@ if( defined( 'MW_INSTALL_PATH' ) ) {
 $path = array( $IP, "$IP/includes", "$IP/languages" );
 set_include_path( implode( PATH_SEPARATOR, $path ) . PATH_SEPARATOR . get_include_path() );
 
-require_once( "$IP/includes/DefaultSettings.php" );
-
 # If PHP's memory limit is very low, some operations may fail.
 # ini_set( 'memory_limit', '20M' );
 
@@ -133,18 +131,14 @@ $wgGroupPermissions['user']['editmyprivateinfo'] = false;
 $wgShowExceptionDetails = true;
 $wgShowDBErrorBacktrace = true;
 
-
 wfLoadSkin( 'Vector' );
 wfLoadSkin( 'MinervaNeue' );
-
 
 wfLoadExtension( 'MobileFrontend' );
 $wgMFAutodetectMobileView = true;
 $wgMFDefaultSkinClass = 'SkinMinerva';
 
 wfLoadExtension( 'VisualEditor' );
-
-wfLoadSkin( 'Vector' );
 
 wfLoadExtension( 'NetBSAuthManager' );
 

@@ -5,8 +5,11 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PrimaryAuthenticationProvider;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\User\UserNameUtils;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Psr\Log\LoggerInterface;
+use Config;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -49,8 +52,8 @@ class NetBSPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationPr
     /**
      * Initialize the provider
      */
-    public function init( LoggerInterface $logger, AuthManager $manager, Config $config ) {
-        parent::init( $logger, $manager, $config );
+    public function init( LoggerInterface $logger, AuthManager $manager, HookContainer $hookContainer, Config $config, UserNameUtils $userNameUtils ) {
+        parent::init( $logger, $manager, $hookContainer, $config, $userNameUtils );
         
         // Ensure we have valid configuration
         if ( empty( $this->config ) ) {
