@@ -1,3 +1,9 @@
 [submodule "MobileFrontend"]
 	path = MobileFrontend
 	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/MobileFrontend
+[submodule "CodeMirror"]
+	path = CodeMirror
+	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/CodeMirror
+[submodule "Popups"]
+	path = Popups
+	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/Popups

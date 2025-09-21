@@ -15,6 +15,12 @@ RUN composer install --working-dir /var/www/html/extensions/NetBSAuthManager
 # Copy mobile frontend extension
 COPY ./MobileFrontend /var/www/html/extensions/MobileFrontend
 
+# Copy code mirror extension
+COPY ./CodeMirror /var/www/html/extensions/CodeMirror
+
+# Copy popups extension
+COPY ./Popups /var/www/html/extensions/Popups
+
 # Copy logo
 COPY ./logo.png /var/www/html/logo.png
 

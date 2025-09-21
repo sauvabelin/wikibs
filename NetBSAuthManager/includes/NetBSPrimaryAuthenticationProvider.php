@@ -9,7 +9,6 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\User\UserNameUtils;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Psr\Log\LoggerInterface;
-use Config;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

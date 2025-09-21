@@ -140,6 +140,23 @@ $wgMFDefaultSkinClass = 'SkinMinerva';
 
 wfLoadExtension( 'VisualEditor' );
 
+wfLoadExtension( 'WikiEditor' );
+
+wfLoadExtension( 'CodeMirror' );
+
+$wgDefaultUserOptions[ 'usecodemirror' ] = true;
+
+wfLoadExtension( 'SyntaxHighlight_GeSHi' );
+
+wfLoadExtension( 'TextExtracts' );
+
+wfLoadExtension( 'PageImages' );
+
+wfLoadExtension( 'Popups' );
+
+$wgPopupsHideOptInOnPreferencesPage = true;
+$wgPopupsTextExtractsIntroOnly = false;
+
 wfLoadExtension( 'NetBSAuthManager' );
 
 $wgNetBSAuthConfig = [
