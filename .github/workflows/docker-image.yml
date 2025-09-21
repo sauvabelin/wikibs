@@ -33,13 +33,13 @@ jobs:
         run: |
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             # For tags, use the tag name
-            echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+            echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
           elif [[ $GITHUB_REF == refs/heads/main ]]; then
             # For main branch, use 'latest'
-            echo "tag=latest" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
           else
             # For other branches, use the branch name
-            echo "tag=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+            echo "tag=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
           fi
       
       - name: Build and push Docker image
