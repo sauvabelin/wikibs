@@ -2,7 +2,7 @@
 on:
   push:
     branches: ['**']
-    tags: ['REL*']
+    tags: ['**']
 
 env:
   REGISTRY: ghcr.io
