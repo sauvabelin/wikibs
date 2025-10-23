@@ -1,4 +1,4 @@
-FROM mediawiki:1.39.13
+FROM mediawiki:1.39.12
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
