@@ -1,4 +1,4 @@
-FROM mediawiki:1.35.13
+FROM mediawiki:1.39.13
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -15,8 +15,11 @@ RUN composer install --working-dir /var/www/html/extensions/NetBSAuthManager
 # Copy mobile frontend extension
 COPY ./MobileFrontend /var/www/html/extensions/MobileFrontend
 
-# Copy skin
-COPY ./MinervaNeue /var/www/html/skins/MinervaNeue
+# Copy code mirror extension
+COPY ./CodeMirror /var/www/html/extensions/CodeMirror
+
+# Copy popups extension
+COPY ./Popups /var/www/html/extensions/Popups
 
 # Copy logo
 COPY ./logo.png /var/www/html/logo.png
