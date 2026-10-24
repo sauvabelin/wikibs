@@ -10,7 +10,7 @@ function genv($env, $def) {
 # If you make manual changes, please keep track in case you need to
 # recreate them later.
 #
-# See includes/DefaultSettings.php for all configurable settings
+# See includes/MainConfigSchema.php for all configurable settings
 # and their default values, but don't forget to make changes in _this_
 # file, not there.
 
@@ -28,11 +28,6 @@ set_include_path( implode( PATH_SEPARATOR, $path ) . PATH_SEPARATOR . get_includ
 # If PHP's memory limit is very low, some operations may fail.
 # ini_set( 'memory_limit', '20M' );
 
-if ( $wgCommandLineMode ) {
-    if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-        die( "This script must be run from the command line\n" );
-    }
-}
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
 $wgSitename         = "Wiki Sauvabelin";
@@ -69,12 +64,6 @@ $wgDBpassword       = genv("DB_PASS", "");
 
 # MySQL specific settings
 $wgDBprefix         = "";
-
-# MySQL table options to use during installation or update
-$wgDBTableOptions   = "TYPE=InnoDB";
-
-# Experimental charset support for MySQL 4.1/5.0.
-$wgDBmysql5 = false;
 
 
 ## Shared memory settings
