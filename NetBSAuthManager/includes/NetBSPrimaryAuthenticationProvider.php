@@ -5,9 +5,12 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PrimaryAuthenticationProvider;
+use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -202,10 +205,10 @@ class NetBSPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationPr
      * Test whether the named user exists
      *
      * @param string $username MediaWiki username
-     * @param int $flags Bitfield of User:READ_* constants
+     * @param int $flags Bitfield of IDBAccessObject::READ_* constants
      * @return bool
      */
-    public function testUserExists( $username, $flags = User::READ_NORMAL ) {
+    public function testUserExists( $username, $flags = IDBAccessObject::READ_NORMAL ) {
         $netBS = $this->getNetBS();
         return $netBS ? $netBS->getUser( $username ) !== null : false;
     }
@@ -393,26 +396,24 @@ class NetBSPrimaryAuthenticationProvider extends AbstractPrimaryAuthenticationPr
         $isAdmin = (int)$netBSUser['wiki_admin'] === 1;
         
         // Get current groups
-        $currentGroups = $user->getGroups();
+        $userGroupManager = MediaWikiServices::getInstance()->getUserGroupManager();
+        $currentGroups = $userGroupManager->getUserGroups( $user );
         $adminGroups = [ 'sysop', 'bureaucrat' ];
         
         if ( $isAdmin ) {
             // Add admin groups if not already present
             foreach ( $adminGroups as $group ) {
                 if ( !in_array( $group, $currentGroups ) ) {
-                    $user->addGroup( $group );
+                    $userGroupManager->addUserToGroup( $user, $group );
                 }
             }
         } else {
             // Remove admin groups if present
             foreach ( $adminGroups as $group ) {
                 if ( in_array( $group, $currentGroups ) ) {
-                    $user->removeGroup( $group );
+                    $userGroupManager->removeUserFromGroup( $user, $group );
                 }
             }
         }
-        
-        // Save user changes
-        $user->saveSettings();
     }
 }
