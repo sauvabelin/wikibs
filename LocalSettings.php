@@ -121,6 +121,8 @@ $wgShowExceptionDetails = true;
 $wgShowDBErrorBacktrace = true;
 
 wfLoadSkin( 'Vector' );
+# Keep legacy Vector as the default (1.43 core default is 'vector-2022')
+$wgDefaultSkin = 'vector';
 wfLoadSkin( 'MinervaNeue' );
 
 wfLoadExtension( 'MobileFrontend' );
