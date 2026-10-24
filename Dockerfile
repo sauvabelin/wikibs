@@ -1,5 +1,8 @@
 FROM mediawiki:1.43
 
+# composer needs unzip to extract dist packages
+RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
+
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
