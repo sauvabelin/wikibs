@@ -7,3 +7,11 @@
 [submodule "Popups"]
 	path = Popups
 	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/Popups
+[submodule "PluggableAuth"]
+	path = PluggableAuth
+	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/PluggableAuth
+	branch = REL1_43
+[submodule "OpenIDConnect"]
+	path = OpenIDConnect
+	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/OpenIDConnect
+	branch = REL1_43
